@@ -13,16 +13,19 @@ class Login extends Component
 {
 
     #[Validate('required|email')]
-    public $email = env('EMAIL_ADMIN');
+    public $email;
 
     #[Validate('required|min:6')]
-    public $password = env('PASSWORD_ADMIN');
+    public $password;
 
     private LoginUseCase $loginUseCase;
 
     public function boot(LoginUseCase $loginUseCase)
     {
         $this->loginUseCase = $loginUseCase;
+        $this->email = env('EMAIL_ADMIN');
+        $this->password = env('PASSWORD_ADMIN');
+        
         if (Auth::check()) {
             redirect()->route('dashboard');
         }
