@@ -13,10 +13,10 @@ class Login extends Component
 {
 
     #[Validate('required|email')]
-    public $email = 'masbro@ulemindulu.my.id';
+    public $email = env('EMAIL_ADMIN');
 
     #[Validate('required|min:6')]
-    public $password = 'masukindulubro';
+    public $password = env('PASSWORD_ADMIN');
 
     private LoginUseCase $loginUseCase;
 
