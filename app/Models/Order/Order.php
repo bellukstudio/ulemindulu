@@ -18,6 +18,9 @@ class Order extends Model
         'payment_status',
         'midtrans_order_id',
         'order_date',
+        'invitation_template_id',
+        'subdomain',
+        'template_data',
     ];
 
     protected $dates = ['deleted_at'];

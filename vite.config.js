@@ -6,7 +6,7 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
     plugins: [
         laravel({
-            input: ['resources/css/app.css', 'resources/js/frontend/app.jsx', 'resources/js/backend/app.js'],
+            input: ['resources/css/app.css', 'resources/js/frontend/app.jsx', 'resources/js/app.js'],
             refresh: true,
         }),
         tailwindcss(),
@@ -14,5 +14,10 @@ export default defineConfig({
     ],
     build: {
         outDir: "public/build",
+        rollupOptions: {
+            input: {
+                basic: 'resources/js/templates/basic/main.jsx',
+            }
+        }
     },
 });

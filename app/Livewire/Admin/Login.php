@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
-
 class Login extends Component
 {
 
@@ -23,9 +22,9 @@ class Login extends Component
     public function boot(LoginUseCase $loginUseCase)
     {
         $this->loginUseCase = $loginUseCase;
-        $this->email = env('EMAIL_ADMIN');
-        $this->password = env('PASSWORD_ADMIN');
-        
+        $this->email = env('EMAIL_ADMIN') ?? "";
+        $this->password = env('PASSWORD_ADMIN') ?? "";
+
         if (Auth::check()) {
             redirect()->route('dashboard');
         }
@@ -57,9 +56,16 @@ class Login extends Component
         }
     }
 
+
+    public function layout()
+    {
+        return 'components.layouts.guest';
+    }
+
+
     public function render()
     {
 
-        return view('livewire.admin.login');
+        return view('livewire.admin.login')->layout('components.layouts.guest');
     }
 }

@@ -13,6 +13,16 @@ Route::middleware(['web'])->group(function () {
 
         Route::middleware(['auth'])->group(function () {
             Route::get('/dashboard', Dashboard::class)->name('dashboard');
+
+            Route::prefix('dashboard')->group(function () {
+                Route::get('/packets', App\Livewire\Admin\Packet\Index::class)->name('packets.index');
+                Route::get('/packets/create', App\Livewire\Admin\Packet\Create::class)->name('packets.create');
+                Route::get('/packets/{packet}/edit', App\Livewire\Admin\Packet\Edit::class)->name('packets.edit');
+
+                Route::get('/templates', App\Livewire\Admin\Template\Index::class)->name('templates.index');
+                Route::get('/templates/create', App\Livewire\Admin\Template\Create::class)->name('templates.create');
+                Route::get('/templates/{template}/edit', App\Livewire\Admin\Template\Edit::class)->name('templates.edit');
+            });
             Route::post('/logout', function () {
                 Auth::logout();
                 session()->invalidate();

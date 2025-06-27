@@ -18,6 +18,9 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->string('preview_url')->nullable();
             $table->string('folder_path');
+            $table->decimal('price', 10, 2);
+            $table->boolean('isDiscount')->default(false);
+            $table->decimal('priceDiscount', 10, 2)->nullable();
             $table->enum('type', ['wedding', 'birthday', 'aqiqah', 'syukuran', 'event'])->default('wedding');
             $table->boolean('is_active')->default(true);
             $table->timestamps();

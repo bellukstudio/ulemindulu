@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('client_id')->constrained('register_clients')->cascadeOnDelete();
-            $table->foreignUuid('packet_id')->constrained('packets')->cascadeOnDelete();
             $table->enum('payment_status', ['pending', 'paid', 'failed'])->default('pending');
             $table->string('midtrans_order_id')->nullable();
             $table->date('order_date');
