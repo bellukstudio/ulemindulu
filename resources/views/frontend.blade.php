@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Frontend React</title>
+    <title>Ulemindulu</title>
+    <link rel="icon" type="image/x-icon" href="sample/logo.png">
     @viteReactRefresh
     @vite(['resources/css/app.css', 'resources/js/frontend/app.jsx'])
 </head>
