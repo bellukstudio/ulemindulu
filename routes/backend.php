@@ -6,7 +6,7 @@ use App\Livewire\Admin\Login;
 use Illuminate\Support\Facades\Auth;
 
 Route::middleware(['web'])->group(function () {
-
+    
     Route::prefix('ulemindulu/admin')->group(function () {
         Route::get('/login', Login::class)->name('login');
 
