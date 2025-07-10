@@ -34,4 +34,18 @@ class TemplateRepositoryImpl implements TemplateInterface
     {
         return $template->delete();
     }
+
+    //api
+
+    public function allApi(string $search, int $perPage): mixed
+    {
+        $templates = InvitationTemplate::query();
+        if (!empty(trim($search))) {
+            $templates->where(function ($q) use ($search) {
+                $q->where('type', 'LIKE', '%' . $search . '%');
+            });
+        }
+
+        return $templates->orderBy('created_at', 'desc')->paginate($perPage);
+    }
 }

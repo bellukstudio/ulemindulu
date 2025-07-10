@@ -66,8 +66,8 @@ export default function FooterSection() {
                 </div>
             </div>
 
-            <div className="text-center text-gray-500 text-sm mt-10">
-                &copy; {currentYear} Ulemindulu. All rights reserved.
+            <div className="text-center text-white text-sm mt-10">
+                &copy; {currentYear} Ulemindulu. All rights reserved. Powered by {" "} <a href="https://bellukstudio.my.id" target="_blank" className="text-blue-100 hover:underline">BellukStudio</a>
             </div>
         </footer>
     );

@@ -6,7 +6,7 @@ use App\Livewire\Admin\Login;
 use Illuminate\Support\Facades\Auth;
 
 Route::middleware(['web'])->group(function () {
-    
+
     Route::prefix('ulemindulu/admin')->group(function () {
         Route::get('/login', Login::class)->name('login');
 
@@ -22,6 +22,8 @@ Route::middleware(['web'])->group(function () {
                 Route::get('/templates', App\Livewire\Admin\Template\Index::class)->name('templates.index');
                 Route::get('/templates/create', App\Livewire\Admin\Template\Create::class)->name('templates.create');
                 Route::get('/templates/{template}/edit', App\Livewire\Admin\Template\Edit::class)->name('templates.edit');
+
+                Route::get('/orders', App\Livewire\Admin\Order\Index::class)->name('orders.index');
             });
             Route::post('/logout', function () {
                 Auth::logout();

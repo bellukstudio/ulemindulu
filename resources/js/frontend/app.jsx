@@ -1,22 +1,21 @@
-import React from "react";
 import ReactDOM from "react-dom/client";
-import Navbar from "./components/Navbar";
-import HomeSection from "./components/HomeSection";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "flowbite";
-import UleminduluFeaturesSection from "./components/UleminduluFeaturesSection";
-import FullFeaturesSection from "./components/FullFeatureSection";
-import FooterSection from "./components/FooterSection";
-import PriceListSection from "./components/PriceListSection";
+import ListTemplate from "./templates/ListTemplate";
+import HomePage from "./pages/HomePage";
+import RegisterPage from "./pages/RegisterPage";
+import LoginPage from "./pages/LoginPage";
+
 const App = () => {
     return (
-        <>
-            <Navbar />
-            <HomeSection />
-            <UleminduluFeaturesSection/>
-            <FullFeaturesSection/>
-            <PriceListSection/>
-            <FooterSection/>
-        </>
+        <Router>
+            <Routes>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/templates" element={<ListTemplate />} />
+                <Route path="/register" element={<RegisterPage />} />
+                <Route path="/login" element={<LoginPage />} />
+            </Routes>
+        </Router>
     );
 };
 

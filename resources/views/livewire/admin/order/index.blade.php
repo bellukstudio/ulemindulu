@@ -1,10 +1,10 @@
 <div>
-    {{-- Success Message --}}
     @if (session()->has('message'))
         <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
             {{ session('message') }}
         </div>
     @endif
+
 
     <div class="relative overflow-x-auto shadow-md sm:rounded-lg w-full p-6 mt-16">
         <div class="pb-4 bg-white dark:bg-gray-900">
@@ -27,13 +27,13 @@
                 </div>
 
                 {{-- Action Button --}}
-                <div class="flex items-center justify-start md:justify-end">
+                {{-- <div class="flex items-center justify-start md:justify-end">
                     <a href="{{ route('templates.create') }}"
                         class="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4
                         focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
                         + Add Template
                     </a>
-                </div>
+                </div> --}}
             </div>
         </div>
 
@@ -43,83 +43,34 @@
             <x-ui.loading />
         </div>
 
-        <x-ui.table :headers="[
-            '#',
-            'Template',
-            'Description',
-            'Url',
-            'Folder',
-            'Type',
-            'Status',
-            'Discount',
-            'Price',
-            'Slug',
-            'Thumbnail',
-            'Action',
-        ]">
-            @forelse ($templates as $index => $template)
+        <x-ui.table :headers="['#', 'Client Name', 'Order Date', 'Invitation Template', 'Subdomain', 'Action']">
+            @forelse ($orders as $index => $order)
                 <tr class="border-b hover:bg-gray-100 dark:hover:bg-gray-600">
                     <td class="py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">
                         {{ $index + 1 }}
                     </td>
                     <td class="py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                        {{ $template->template_name }}
+                        {{ $order->client->clientName ?? '' }}
+                    </td>
                     </td>
                     <td class="py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                        {{ $template->description }}
+                        {{ $order->order_date ?? '' }}
                     </td>
                     <td class="py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                        {{ $template->preview_url }}
+                        {{ $order->template->template_name ?? '' }}
                     </td>
                     <td class="py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                        {{ $template->folder_path }}
+                        {{ $order->template->template_name ?? '' }}
                     </td>
                     <td class="py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                        {{ $template->type }}
-                    </td>
-                    <td class="py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">
-
-                        @if ($template->is_active)
-                            <span
-                                class="inline-flex items-center px-2 py-1 text-xs font-medium text-green-800 bg-green-100 rounded-full">Active
-                            </span>
-                        @else
-                            <span
-                                class="inline-flex items-center px-2 py-1 text-xs font-medium text-red-800 bg-red-100 rounded-full">Inactive
-                            </span>
-                        @endif
-
-                    </td>
-                    <td class="py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                        @if ($template->isDiscount && $template->priceDiscount)
-                            <span
-                                class="inline-flex items-center px-2 py-1 text-xs font-medium text-green-800 bg-green-100 rounded-full">
-                                Rp{{ number_format($template->priceDiscount, 0, ',', '.') }}
-                            </span>
-                        @else
-                            <span
-                                class="inline-flex items-center px-2 py-1 text-xs font-medium text-gray-800 bg-gray-100 rounded-full">
-                                No Discount
-                            </span>
-                        @endif
-                    </td>
-                    <td class="py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                        Rp{{ number_format($template->price, 0, ',', '.') }}
-                    </td>
-                    <td class="py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                        {{ $template->slug }}
-                    </td>
-                    <td class="py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                        <img src="{{ $template->thumbnail }}" alt="{{ $template->template_name }}"
-                            class="w-28 h-20">
+                        {{ $order->subdomain ?? '' }}
                     </td>
                     <td class="px-6 py-3">
                         <div class="flex space-x-2">
-                            <a href="{{ route('templates.edit', $template->id) }}"
-                                class="text-blue-600 hover:text-blue-900 font-medium">
+                            <a href="" class="text-blue-600 hover:text-blue-900 font-medium">
                                 Edit
                             </a>
-                            <button wire:click="delete('{{ $template->id }}')"
+                            <button wire:click="delete('{{ $order->id }}')"
                                 wire:confirm="Are you sure you want to delete this template?"
                                 class="text-red-600 hover:text-red-900 font-medium">
                                 Delete
@@ -129,7 +80,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="12" class="text-center py-8">
+                    <td colspan="6" class="text-center py-8">
                         <div class="flex flex-col items-center">
                             <svg class="w-12 h-12 text-gray-400 mb-4" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
@@ -139,9 +90,9 @@
                             </svg>
                             <p class="text-gray-500 text-lg">
                                 @if ($search)
-                                    No template found for "{{ $search }}"
+                                    No order found for "{{ $search }}"
                                 @else
-                                    No template available
+                                    No order available
                                 @endif
                             </p>
                             @if ($search)
@@ -154,12 +105,10 @@
                 </tr>
             @endforelse
         </x-ui.table>
-        @if ($templates->hasPages())
+        @if ($orders->hasPages())
             <div class="mt-4">
-                {{ $templates->links('pagination::tailwind') }}
+                {{ $orders->links('pagination::tailwind') }}
             </div>
         @endif
     </div>
-
-
 </div>

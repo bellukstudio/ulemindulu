@@ -2,6 +2,7 @@
 
 namespace App\Models\Order;
 
+use DateTimeInterface;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -16,6 +17,8 @@ class InvitationTemplate extends Model
         'slug',
         'preview_url',
         'folder_path',
+        'thumbnail',
+        'thumbnail_public_id',
         'type',
         'is_active',
         'price',
@@ -44,5 +47,10 @@ class InvitationTemplate extends Model
     public function scopeSearch($query, $search)
     {
         return $query->where('template_name', 'like', '%' . $search . '%');
+    }
+
+    protected function serializeDate(DateTimeInterface $date)
+    {
+        return $date->format('d F Y');
     }
 }

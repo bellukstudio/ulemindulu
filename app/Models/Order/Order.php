@@ -14,7 +14,6 @@ class Order extends Model
 
     protected $fillable = [
         'client_id',
-        'packet_id',
         'payment_status',
         'midtrans_order_id',
         'order_date',
@@ -30,10 +29,7 @@ class Order extends Model
         return $this->belongsTo(RegisterClient::class);
     }
 
-    public function packet()
-    {
-        return $this->belongsTo(Packet::class);
-    }
+
 
     public function template()
     {
