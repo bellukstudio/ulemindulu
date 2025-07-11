@@ -1,7 +1,36 @@
 import { useState } from "react";
-
+import { isTokenAvailable, removeToken } from "../core/token";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 export default function Navbar() {
+    const baseURL = import.meta.env.VITE_API_BASE_URL;
     const [isOpen, setIsOpen] = useState(false);
+
+    const navigate = useNavigate();
+
+    const handleLogout = async (e) => {
+        e.preventDefault();
+
+        try {
+            await axios.post(
+                `${baseURL}/v1/auth/logout`,
+                {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem(
+                            "token"
+                        )}`,
+                    },
+                }
+            );
+
+            removeToken();
+
+            navigate("/login");
+        } catch (error) {
+            console.error("Gagal logout:", error);
+        }
+    };
 
     return (
         <nav className="bg-[#3758F9] dark:bg-gray-900 fixed w-full z-20 top-0 start-0 border-b border-[#3758F9] dark:border-gray-600">
@@ -12,12 +41,22 @@ export default function Navbar() {
 
                 {/* Tombol Get Started dan Hamburger */}
                 <div className="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
-                    <a
-                        href="/login"
-                        className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                    >
-                        Get started
-                    </a>
+                    {!isTokenAvailable() ? (
+                        <a
+                            href="/login"
+                            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                        >
+                            Get Started
+                        </a>
+                    ) : (
+                        <button
+                            onClick={handleLogout}
+                            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                        >
+                            Log Out
+                        </button>
+                    )}
+
                     <h4 className="px-4 py-2 right-0 text-gray-200  hidden sm:block text-[12px] font-bold">
                         v1.0.0
                     </h4>

@@ -56,7 +56,7 @@ class Create extends Component
 
         try {
             $uploadedFile = Cloudinary::uploadApi()->upload($this->thumbnail->getRealPath(), [
-                'folder' => 'template',
+                'folder' => 'template/'.$this->type,
                 'resource_type' => 'image'
             ]);
 
@@ -135,7 +135,7 @@ class Create extends Component
 
             session()->flash('message', 'Template created successfully!');
             $this->reset();
-            
+
         } catch (\Exception $e) {
             $this->addError('error', 'Failed to create template: ' . $e->getMessage());
         }
