@@ -5,8 +5,6 @@
 
             <x-form.textarea label="Description" name="description" model="description" rows="4" />
 
-            <x-form.input-floating label="Url" name="previewUrl" model="previewUrl" required />
-
             <x-form.input-floating label="Folder" name="folderPath" model="folderPath" required />
 
             <x-form.select label="Invitation Type" name="type" model="type" :options="$types" />

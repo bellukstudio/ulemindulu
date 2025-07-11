@@ -6,9 +6,12 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\Order\Order;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
+
 class RegisterClient extends Model
 {
-    use HasUuids, SoftDeletes;
+    use HasUuids, SoftDeletes, HasApiTokens, Notifiable;
     protected $fillable = [
         'clientName',
         'email',
@@ -20,5 +23,4 @@ class RegisterClient extends Model
     {
         return $this->hasMany(Order::class);
     }
-
 }

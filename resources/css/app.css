@@ -13,6 +13,7 @@
         "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
         "Noto Color Emoji";
 
+    --font-dancing: "Dancing Script", cursive;
 }
 @layer base {
     html {
@@ -35,5 +36,8 @@
 
     .animate-custom-bounce {
         animation: custom-bounce 2s infinite;
+    }
+    .font-dancing{
+        font-family: var(--font-dancing);
     }
 }

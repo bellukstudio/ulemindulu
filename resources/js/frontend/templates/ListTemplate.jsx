@@ -4,6 +4,7 @@ import Navbar from "../components/Navbar";
 import TemplateSection from "../components/TemplateSection";
 import FooterSection from "../components/FooterSection";
 export default function ListTemplate() {
+    const baseURL = import.meta.env.VITE_API_BASE_URL;
     const [templates, setTemplates] = useState([]);
     const [pagination, setPagination] = useState({
         current_page: 1,
@@ -13,7 +14,7 @@ export default function ListTemplate() {
     const fetchTemplates = async (page = 1) => {
         try {
             const res = await axios.get(
-                `http://127.0.0.1:8000/api/v1/template/all?page=${page}&per_page=20`
+                `${baseURL}/v1/template/all?page=${page}&per_page=20`
             );
             setTemplates(res.data.data);
             setPagination({

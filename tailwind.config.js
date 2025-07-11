@@ -8,9 +8,11 @@ module.exports = {
         "./resources/**/**/*.jsx",
     ],
     theme: {
-        extend: {},
+        extend: {
+            fontFamily: {
+                dancing: ['"Dancing Script"', "cursive"],
+            },
+        },
     },
-    plugins: [
-        require("flowbite/plugin"),
-    ],
+    plugins: [require("flowbite/plugin")],
 };

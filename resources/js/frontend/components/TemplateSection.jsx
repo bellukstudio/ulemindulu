@@ -88,7 +88,7 @@ export default function TemplateSection({
                                 {template.template_name}
                             </h3>
                             <a
-                                href={`/template/${template.slug}`}
+                                href={`/template/${template.slug}`} target="_blank"
                                 className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 text-center rounded-3xl mt-5"
                             >
                                 Lihat Template

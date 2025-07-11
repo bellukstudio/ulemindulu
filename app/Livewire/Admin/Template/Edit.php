@@ -20,10 +20,6 @@ class Edit extends Component
     #[Validate('nullable')]
     public $description;
 
-
-    #[Validate('required')]
-    public $previewUrl;
-
     #[Validate('required')]
     public $folderPath;
 
@@ -63,7 +59,6 @@ class Edit extends Component
         $this->template = $template;
         $this->templateName = $template->template_name;
         $this->description = $template->description;
-        $this->previewUrl = $template->preview_url;
         $this->folderPath = $template->folder_path;
         $this->type = $template->type;
         $this->price = $template->price;
@@ -81,7 +76,7 @@ class Edit extends Component
 
         try {
             $uploadedFile = Cloudinary::uploadApi()->upload($this->thumbnail->getRealPath(), [
-                'folder' => 'template',
+                'folder' => 'template/'.$this->type,
                 'resource_type' => 'image'
             ]);
 
@@ -135,11 +130,12 @@ class Edit extends Component
             $newSlug = $this->generateUniqueSlug($this->templateName, $this->type, $this->template->id);
             $newPreviewUrl = env('APP_URL') . '/template/' . $newSlug;
 
+
             $updateData = [
-                'templateName' => $this->templateName,
+                'template_name' => $this->templateName,
                 'description' => $this->description,
                 'slug' => $newSlug,
-                'previewUrl' => $newPreviewUrl,
+                'preview_url' => $newPreviewUrl,
                 'folderPath' => $this->folderPath,
                 'type' => $this->type,
                 'price' => $this->price,
