@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-
+import { formatRupiah } from "../../core/util";
+import {isTokenAvailable} from "../../core/token";
 export default function TemplateSection({
     templates,
     pagination,
@@ -39,7 +40,6 @@ export default function TemplateSection({
             <p className="text-center text-gray-600 mb-10">
                 <strong>{templates.length} Presets</strong> tersedia.
             </p>
-
             <div className="flex flex-wrap justify-center gap-2 mb-8">
                 {categories.map((cat) => (
                     <button
@@ -64,14 +64,20 @@ export default function TemplateSection({
                     </button>
                 ))}
             </div>
-
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 px-10">
                 {filteredTemplates.map((template) => (
                     <div
                         key={template.id}
-                        className="bg-white rounded-4xl h-auto shadow hover:shadow-xl transition overflow-hidden"
+                        className="bg-white rounded-3xl h-auto shadow hover:shadow-xl transition overflow-hidden"
                     >
                         <div className="relative">
+                            {template.isDiscount ? (
+                                <span className="absolute top-0 right-0 px-3 py-1 text-md font-bold text-white bg-red-500 rounded-bl-lg">
+                                    Diskon
+                                </span>
+                            ) : (
+                                <div></div>
+                            )}
                             <img
                                 src={template.thumbnail}
                                 alt={template.template_name}
@@ -84,20 +90,65 @@ export default function TemplateSection({
                             )}
                         </div>
                         <div className="p-4 flex flex-col h-full">
-                            <h3 className="text-lg font-semibold text-gray-800 mb-1">
+                            <h3 className="text-lg font-serif text-gray-800 mb-1 ">
                                 {template.template_name}
                             </h3>
-                            <a
-                                href={`/template/${template.slug}`} target="_blank"
-                                className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 text-center rounded-3xl mt-5"
+                            <h3
+                                className={`text-lg font-semibold text-gray-800 mb-1`}
                             >
-                                Lihat Template
-                            </a>
+                                <span
+                                    className={`${
+                                        template.isDiscount
+                                            ? "line-through"
+                                            : ""
+                                    }`}
+                                >
+                                    {formatRupiah(template.price)}
+                                </span>{" "}
+                                {template.isDiscount
+                                    ? `(${formatRupiah(
+                                          template.priceDiscount
+                                      )})`
+                                    : ""}
+                            </h3>
+                            <div className="flex flex-row justify-between space-x-4">
+                                <a
+                                    href={`/template/${template.slug}`}
+                                    target="_blank"
+                                    className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 text-center rounded-3xl mt-5 w-full"
+                                >
+                                    Lihat Template
+                                </a>
+                                <a
+                                    href={isTokenAvailable() ? `/template-order/${template.id}` : '/login'}
+                                    className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 text-center rounded-3xl mt-5 w-full"
+                                >
+                                    <span className="flex flex-row justify-around space-x-2">
+                                        <svg
+                                            className="w-6 h-6 text-white-800 dark:text-white"
+                                            aria-hidden="true"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="24"
+                                            height="24"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path
+                                                stroke="currentColor"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth="2"
+                                                d="M5 4h1.5L9 16m0 0h8m-8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm-8.5-3h9.25L19 7H7.312"
+                                            />
+                                        </svg>
+                                        Order Template
+                                    </span>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 ))}
             </div>
-
             {/* Pagination */}
             <div className="flex justify-center mt-10 gap-4">
                 <button

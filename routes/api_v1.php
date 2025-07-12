@@ -13,5 +13,11 @@ Route::prefix('v1')->group(function () {
 
     Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::post('/auth/logout', [App\Http\Controllers\Api\V1\LoginController::class, 'logout']);
+
+        // Route ORDER
+        Route::post('/order/order-template', [App\Http\Controllers\Api\V1\OrderController::class, 'createOrder']);
+
+        // Route TEMPLATE
+        Route::get('/templates/me/invitation', [App\Http\Controllers\Api\V1\OrderController::class, 'getAllTemplateOrder']);
     });
 });

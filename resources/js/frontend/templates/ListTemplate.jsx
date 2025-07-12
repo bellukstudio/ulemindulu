@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Navbar from "../components/Navbar";
-import TemplateSection from "../components/TemplateSection";
+import TemplateSection from "./components/TemplateSection";
 import FooterSection from "../components/FooterSection";
 export default function ListTemplate() {
     const baseURL = import.meta.env.VITE_API_BASE_URL;

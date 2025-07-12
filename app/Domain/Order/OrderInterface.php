@@ -9,4 +9,5 @@ interface OrderInterface
     public function create(array $data) : Order;
     public function update(Order $order, array $data) : bool;
     public function delete(Order $order) : bool;
+    //api
 }
