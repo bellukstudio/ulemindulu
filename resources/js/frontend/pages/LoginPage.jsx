@@ -24,6 +24,7 @@ export default function LoginPage() {
             });
 
             localStorage.setItem("token", response.data.token);
+            localStorage.setItem("client", response.data.client.id);
             navigate("/");
         } catch (err) {
             setError(

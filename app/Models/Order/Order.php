@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Order extends Model
 {
-    use HasUuids,SoftDeletes;
+    use HasUuids, SoftDeletes;
 
     protected $fillable = [
         'client_id',
@@ -23,6 +23,9 @@ class Order extends Model
     ];
 
     protected $dates = ['deleted_at'];
+    protected $casts = [
+        'template_data' => 'array',
+    ];
 
     public function client()
     {
@@ -31,7 +34,7 @@ class Order extends Model
 
 
 
-    public function template()
+    public function invitationTemplate()
     {
         return $this->belongsTo(InvitationTemplate::class);
     }

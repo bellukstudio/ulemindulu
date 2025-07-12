@@ -5,6 +5,7 @@ export function isTokenAvailable() {
     return !!token;
 }
 
+
 export function getToken() {
     return localStorage.getItem("token");
 }
@@ -12,3 +13,8 @@ export function getToken() {
 export const removeToken = () => {
     localStorage.removeItem("token");
 };
+
+
+export function getClientId() {
+    return localStorage.getItem("client");
+}

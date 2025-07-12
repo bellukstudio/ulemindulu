@@ -22,7 +22,7 @@ export default function HomeSection() {
 
                     <div className="mt-20 animate-custom-bounce">
                         <img
-                            src="/sample/sample.png"
+                            src="https://res.cloudinary.com/ducsvvqsy/image/upload/v1752304050/template/asset/sample_iqjlxq.png"
                             alt="Preview Undangan"
                             className="w-full max-w-5xl h-auto mx-auto shadow-lg rounded-lg"
                         />
@@ -30,7 +30,7 @@ export default function HomeSection() {
                 </div>
                 <div className="mt-20 ">
                     <img
-                        src="sample/mobile.png"
+                        src="https://res.cloudinary.com/ducsvvqsy/image/upload/v1752303931/template/asset/mobile_fafwkh.png"
                         alt="Preview Undangan"
                         className="w-full max-w-5xl h-auto mx-auto"
                     />
