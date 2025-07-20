@@ -1,10 +1,17 @@
 import { useState, useRef, useEffect } from "react";
-import axios from "axios";
-import { isTokenAvailable, removeToken } from "../core/token";
+import { isTokenAvailable } from "../core/token";
 import { useNavigate } from "react-router-dom";
+import { authenticateAPI } from "../action/auth";
+
+/**
+ * Navbar component renders the navigation bar with links and authentication options.
+ * It manages the state of dropdown and sidebar menus for both desktop and mobile views.
+ * Handles user logout and redirects to the home page upon successful logout.
+ * Includes options for navigating to different sections like Home, Features, Templates, and Testimonials.
+ * Displays a dropdown menu with options for authenticated users and a "Get Started" button for guests.
+ */
 
 export default function Navbar() {
-    const baseURL = import.meta.env.VITE_API_BASE_URL;
     const [isOpen, setIsOpen] = useState(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const navigate = useNavigate();
@@ -13,19 +20,12 @@ export default function Navbar() {
     const handleLogout = async (e) => {
         e.preventDefault();
         try {
-            await axios.post(
-                `${baseURL}/v1/auth/logout`,
-                {},
-                {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem(
-                            "token"
-                        )}`,
-                    },
-                }
-            );
-            removeToken();
-            navigate("/login");
+            const result = await authenticateAPI.logout();
+            if (result.success) {
+                navigate("/");
+            } else {
+                console.error(result.error);
+            }
         } catch (error) {
             console.error("Gagal logout:", error);
         }
@@ -164,7 +164,7 @@ export default function Navbar() {
                                 {isDropdownOpen && (
                                     <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-1 z-50">
                                         <a
-                                            href="/app/client/invitation"
+                                            href="/app/client/invitations"
                                             className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                                         >
                                             <svg
@@ -310,7 +310,7 @@ export default function Navbar() {
                         ) : (
                             <div className="space-y-2">
                                 <a
-                                    href="/profile"
+                                    href="/app/client/invitations"
                                     onClick={closeMenu}
                                     className="flex items-center text-white hover:bg-blue-800 px-3 py-2 rounded-md text-base font-medium"
                                 >

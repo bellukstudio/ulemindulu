@@ -1,28 +1,39 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import Navbar from "../components/Navbar";
 import TemplateSection from "./components/TemplateSection";
 import FooterSection from "../components/FooterSection";
+import { templateAPI } from "../action/template.js";
+
 export default function ListTemplate() {
-    const baseURL = import.meta.env.VITE_API_BASE_URL;
     const [templates, setTemplates] = useState([]);
     const [pagination, setPagination] = useState({
         current_page: 1,
         last_page: 1,
+        total: 0,
+        per_page: 20,
     });
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
 
     const fetchTemplates = async (page = 1) => {
+        setLoading(true);
+        setError(null);
+
         try {
-            const res = await axios.get(
-                `${baseURL}/v1/template/all?page=${page}&per_page=20`
-            );
-            setTemplates(res.data.data);
-            setPagination({
-                current_page: res.data.current_page,
-                last_page: res.data.last_page,
-            });
+            const result = await templateAPI.fetchTemplates(page, pagination.per_page);
+
+            if (result.success) {
+                setTemplates(result.data);
+                setPagination(result.pagination);
+            } else {
+            setError(result.error);
+                setTemplates([]);
+            }
         } catch (err) {
-            console.error("Gagal fetch data:", err);
+            setError("Terjadi kesalahan saat memuat template");
+            setTemplates([]);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -56,6 +67,8 @@ export default function ListTemplate() {
                 pagination={pagination}
                 onNext={nextPage}
                 onPrev={prevPage}
+                loading={loading}
+                error={error}
             />
             <FooterSection />
         </>

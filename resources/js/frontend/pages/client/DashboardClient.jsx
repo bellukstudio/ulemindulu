@@ -1,5 +1,13 @@
 import SidebarClient from "./components/SidebarClient";
 
+/**
+ * A functional component that renders the client dashboard.
+ *
+ * This component renders a collection of placeholder cards to
+ * demonstrate the layout of the client dashboard.
+ *
+ * @returns {JSX.Element} The client dashboard component.
+ */
 export default function DashboardClient() {
     return (
         <>

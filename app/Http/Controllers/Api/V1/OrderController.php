@@ -2,19 +2,27 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Application\Order\CreateOrderApiUseCase;
+use App\Application\Order\GetAllTemplateOrderApiUseCase;
+use App\Application\Order\ShowTemplateOrderApiUseCase;
 use App\Http\Controllers\Controller;
-use App\Insfrastructure\Order\OrderRepositoryImpl;
+use App\Models\Order\InvitationTemplate;
+use App\Models\User\RegisterClient;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class OrderController extends Controller
 {
-    protected $orderRepository;
+    protected $useCaseCreateOrder;
+    protected $useCaseGetTemplateOrder;
+    protected $useCaseShowTemplateOrder;
 
 
-    public function __construct(OrderRepositoryImpl $orderRepository)
+    public function __construct(CreateOrderApiUseCase $createOrderApiUseCase, GetAllTemplateOrderApiUseCase $getAllTemplateOrderApiUseCase, ShowTemplateOrderApiUseCase $showTemplateOrderApiUseCase)
     {
-        $this->orderRepository = $orderRepository;
+        $this->useCaseCreateOrder = $createOrderApiUseCase;
+        $this->useCaseGetTemplateOrder = $getAllTemplateOrderApiUseCase;
+        $this->useCaseShowTemplateOrder = $showTemplateOrderApiUseCase;
     }
 
     /**
@@ -57,29 +65,30 @@ class OrderController extends Controller
             'invitation_template_id' => 'required|exists:invitation_templates,id',
             'order_date' => 'required|date',
             'subdomain' => 'required|unique:orders,subdomain',
-
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
+            $response = response()->json(['errors' => $validator->errors()], 422);
+        } elseif (!$request->user()) {
+            $response = response()->json(['message' => 'Unauthenticated'], 401);
+        } elseif (!RegisterClient::find($request->client_id)) {
+            $response = response()->json(['message' => 'Client not found'], 404);
+        } elseif (!InvitationTemplate::find($request->invitation_template_id)) {
+            $response = response()->json(['message' => 'Template not found'], 404);
+        } else {
+            $this->useCaseCreateOrder->execute([
+                'client_id' => $request->client_id,
+                'invitation_template_id' => $request->invitation_template_id,
+                'order_date' => $request->order_date,
+                'subdomain' => $request->subdomain,
+            ]);
+
+            $response = response()->json(['message' => 'Order created successfully'], 201);
         }
 
-        if (!$request->user()) {
-            return response()->json(['message' => 'Unauthenticated'], 401);
-        }
-
-
-        $order = $this->orderRepository->create([
-            'client_id' => $request->client_id,
-            'invitation_template_id' => $request->invitation_template_id,
-            'order_date' => $request->order_date,
-            'subdomain' => $request->subdomain
-        ]);
-
-        return response()->json([
-            'message' => 'Order created successfully',
-        ], 201);
+        return $response;
     }
+
 
 
     /**
@@ -119,7 +128,41 @@ class OrderController extends Controller
         $search = $request->get('search', '');
         $perPage = (int) $request->get('per_page', 10);
         $perPage = $perPage > 100 ? 100 : $perPage;
-        $templates = $this->orderRepository->getAllTemplateOrder($search, $perPage);
+        $templates = $this->useCaseGetTemplateOrder->execute($search, $perPage);
         return response()->json($templates);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/v1/orders/{id}",
+     *     summary="Get order by id",
+     *     tags={"Order"},
+     *     security={{"bearer":{}}},
+     *     @OA\Parameter(
+     *         description="Id of order",
+     *         in="path",
+     *         name="id",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer",
+     *             format="int64"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Order detail",
+     *         @OA\JsonContent(ref="#/components/schemas/OrderResource")
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized"
+     *     )
+     * )
+     */
+    public function show($id)
+    {
+        $order = $this->useCaseShowTemplateOrder->execute($id);
+
+        return response()->json($order);
     }
 }

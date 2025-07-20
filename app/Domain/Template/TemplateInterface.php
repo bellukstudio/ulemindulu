@@ -14,4 +14,5 @@ interface TemplateInterface
 
     // api
     public function allApi(string $search, int $perPage): mixed;
+    public function showApi($id);
 }

@@ -52,6 +52,8 @@ class Edit extends Component
         ['value' => 'event', 'label' => 'Event'],
         ['value' => 'aqiqah', 'label' => 'Aqiqah'],
         ['value' => 'syukuran', 'label' => 'Syukuran'],
+        ['value' => 'tahlil', 'label' => 'Tahlil'],
+
     ];
 
     public function mount(InvitationTemplate $template)

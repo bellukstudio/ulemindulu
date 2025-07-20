@@ -1,34 +1,38 @@
 import InvitationCard from "./components/InvitationCard";
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import  { useState, useEffect } from "react";
 import SidebarClient from "./components/SidebarClient";
+import { invitationAPI } from "../../action/invitation";
 
+/**
+ * Renders a page for user to view their own created invitation templates.
+ *
+ * Fetches the templates from the API and displays them in a paginated list.
+ * The user can navigate through the pages using the pagination buttons.
+ *
+ * @returns {React.ReactElement} The rendered component.
+ */
 export default function InvitationClient() {
-    const baseURL = import.meta.env.VITE_API_BASE_URL;
     const [templates, setTemplates] = useState([]);
     const [pagination, setPagination] = useState({
         current_page: 1,
         last_page: 1,
+        total: 0,
+        per_page: 20,
     });
 
     const fetchTemplates = async (page = 1) => {
         try {
-            const res = await axios.get(
-                `${baseURL}/v1/templates/me/invitation?page=${page}&per_page=20`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem(
-                            "token"
-                        )}`,
-                    },
-                }
+            const result = await invitationAPI.fetchMyTemplate(
+                page,
+                pagination.per_page
             );
 
-            setTemplates(res.data.data);
-            setPagination({
-                current_page: res.data.current_page,
-                last_page: res.data.last_page,
-            });
+            if (result.success) {
+                setTemplates(result.data);
+                setPagination(result.pagination);
+            } else {
+                console.error(result.error);
+            }
         } catch (err) {
             console.error("Gagal fetch data:", err);
         }

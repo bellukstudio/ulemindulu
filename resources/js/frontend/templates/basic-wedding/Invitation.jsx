@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
+import PropTypes from "prop-types";
+
 import BottomNavbar from "./BottomNavbar";
-import BridgenGroom from "./BridgenGroom";
+import BrideGroom from "./BrideGroom";
 import Closing from "./Closing";
 import HappyMoment from "./HappyMoment";
 import LoveGift from "./LoveGift";
@@ -8,7 +10,11 @@ import Overview from "./Overview";
 import QuranVerse from "./QuranVerse";
 // import WishForm from "./WishForm";
 
-export default function Invitation() {
+Invitation.propTypes = {
+    data: PropTypes.object,
+};
+
+export default function Invitation({ data }) {
     const images = [
         "https://images.unsplash.com/photo-1651868699762-48c50a3883d6?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fHdlZGRpbmclMjBzaXR1YXRpb258ZW58MHx8MHx8fDA%3D",
         "https://images.unsplash.com/photo-1606217239582-d9f72323bcd7?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTV8fG1hcnJpYWdlfGVufDB8fDB8fHww",
@@ -31,19 +37,19 @@ export default function Invitation() {
                 {/* Scrollable content container */}
                 <div className="min-h-screen">
                     <div id="home">
-                        <Overview />
+                        <Overview data={data} />
                     </div>
                     <div id="mempelai">
-                        <BridgenGroom />
+                        <BrideGroom data={data}/>
                     </div>
                     <div id="quranVerse">
-                        <QuranVerse />
+                        <QuranVerse data={data}/>
                     </div>
                     <div id="tanggal">
-                        <HappyMoment />
+                        <HappyMoment data={data}/>
                     </div>
                     <div id="gift">
-                        <LoveGift />
+                        <LoveGift data={data} />
                     </div>
                     {/* <div id="msg">
                         <WishForm />

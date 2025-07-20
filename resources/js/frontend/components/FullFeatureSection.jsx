@@ -1,3 +1,14 @@
+/**
+ * FullFeaturesSection
+ *
+ * Komponen untuk menampilkan fitur-fitur yang dimiliki oleh Ulemindulu.
+ *
+ * Terdiri dari 2 bagian, yaitu:
+ * 1. Gambar dengan elemen-elemen yang mengambang (floating elements) dan
+ * 2. Daftar fitur yang dapat disesuaikan sesuai kebutuhan.
+ *
+ * @returns {JSX.Element} - Komponen untuk menampilkan fitur-fitur Ulemindulu
+ */
 export default function FullFeaturesSection() {
     return (
         <section className="bg-white py-20 px-4">
@@ -45,7 +56,6 @@ export default function FullFeaturesSection() {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3 text-sm text-gray-800">
                         {[
-                            "Bebas Ganti Tema",
                             "Ubah Nama Tamu Unlimited",
                             "Tanpa Masa Aktif",
                             "RSVP & Ucapan",
@@ -53,7 +63,7 @@ export default function FullFeaturesSection() {
                             "Sebar Ke Unlimited Penerima",
                             "Countdown Menuju Hari-H",
                             "Pengingat Google Calendar",
-                            "Foto Galeri & Video",
+                            "Foto Galeri",
                             "Rekening Titip Hadiah",
                             "Titip Kado Fisik Ke Acara",
                             "Gift Virtual Di Undangan",

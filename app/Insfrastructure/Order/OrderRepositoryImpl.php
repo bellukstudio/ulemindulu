@@ -62,4 +62,9 @@ class OrderRepositoryImpl implements OrderInterface
                 'created_at'
             ]);
     }
+
+    public function showById($id)
+    {
+        return Order::with(['invitationTemplate'])->findOrFail($id);
+    }
 }

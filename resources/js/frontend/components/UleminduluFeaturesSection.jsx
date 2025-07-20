@@ -1,3 +1,12 @@
+/**
+ * Komponen untuk menampilkan fitur-fitur yang dimiliki oleh Ulemindulu.
+ *
+ * Terdiri dari 2 bagian, yaitu:
+ * 1. Fitur mengirim undangan instan dan nama tamu personal.
+ * 2. Fitur mudah diekspor ke beragam format.
+ *
+ * @returns {JSX.Element} - Komponen untuk menampilkan fitur-fitur Ulemindulu
+ */
 export default function UleminduluFeaturesSection() {
     return (
         <section className="py-16 bg-[#f8fcff]" id="feature">

@@ -27,6 +27,13 @@ class Order extends Model
         'template_data' => 'array',
     ];
 
+    protected $hidden = [
+        'updated_at',
+        'midtrans_order_id',
+        'deleted_at',
+        'payment_status'
+    ];
+
     public function client()
     {
         return $this->belongsTo(RegisterClient::class);

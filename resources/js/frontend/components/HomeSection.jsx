@@ -1,3 +1,12 @@
+/**
+ * HomeSection is a React functional component that renders the main section
+ * of the homepage. It features a welcoming message and a call-to-action button
+ * to create a digital invitation. The section is styled with a blue background
+ * and includes two images: a preview of the invitation and a mobile view.
+ * The layout adjusts for different screen sizes using flexbox to provide a
+ * responsive design.
+ */
+
 export default function HomeSection() {
     return (
         <section

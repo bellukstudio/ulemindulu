@@ -11,6 +11,9 @@ import HomeBasicWedding from "./templates/basic-wedding/HomeBasicWedding";
 import Order from "./pages/Order";
 import DashboardClient from "./pages/client/DashboardClient";
 import InvitationClient from "./pages/client/Invitation";
+import DetailInvitation from "./pages/client/DetailInvitation";
+import NotFound from "./pages/NotFound";
+import InvitationPage from "./pages/InvitationPage";
 const App = () => {
     return (
         <Router>
@@ -60,7 +63,18 @@ const App = () => {
                         </PrivateRoute>
                     }
                 />
+                <Route
+                    path="/app/client/invitations/edit/:id"
+                    element={
+                        <PrivateRoute>
+                            <DetailInvitation />
+                        </PrivateRoute>
+                    }
+                />
 
+                <Route path="/404" element={<NotFound />} />
+                <Route path="*" element={<NotFound />} />
+                <Route path="/:slug" element={<InvitationPage />} />
                 {/* Template */}
 
                 {/* Basic Template */}

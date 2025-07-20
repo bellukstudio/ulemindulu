@@ -1,7 +1,15 @@
 import { useEffect, useState } from "react";
+import PropTypes from "prop-types";
 
-export default function HappyMoment() {
-    const targetDate = new Date("2028-08-17T00:00:00");
+HappyMoment.propTypes = {
+    data: PropTypes.object,
+};
+export default function HappyMoment({ data }) {
+    const customData = data.custom_data ? JSON.parse(data.custom_data) : {};
+
+    const targetDate = data.event_date
+        ? new Date(data.event_date)
+        : new Date();
     const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
 
     function calculateTimeLeft() {
@@ -69,22 +77,20 @@ export default function HappyMoment() {
 
                 <h1 className="text-5xl font-dancing mt-10">Akad</h1>
                 <h2 className="text-md font-mono mt-5">
-                    Pukul 10.00 WIB - Selesai
+                    Pukul {customData.jamAkad} {data.timezone} - Selesai
                 </h2>
 
                 <h1 className="text-5xl font-dancing mt-10">Resepsi</h1>
                 <h2 className="text-md font-mono mt-5">
-                    Pukul 10.00 WIB - Selesai
+                    Pukul {customData.jamResepsi} {data.timezone} - Selesai
                 </h2>
 
                 <hr className="border-t border-white my-8 w-1/2 place-self-center" />
 
                 <h1 className="text-4xl font-dancing mt-10">Alamat</h1>
-                <h2 className="text-md font-mono mt-5">
-                    Jl. Setia Budi Dukuh Wringin RT 02/05 Kec. Slawi Kab. Tegal
-                </h2>
+                <h2 className="text-md font-mono mt-5">{data.address}</h2>
                 <a
-                    href="https://maps.app.goo.gl/4WBdkHDiWw8UrKpb8"
+                    href={data.location}
                     target="_blank"
                     className="inline-flex items-center gap-2 px-6 py-2 mt-10 bg-gray-100 rounded-full shadow-lg text-sm font-medium font-mono text-gray-800 hover:shadow-xl transition"
                 >

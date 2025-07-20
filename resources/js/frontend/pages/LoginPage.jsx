@@ -2,14 +2,29 @@ import FooterSection from "../components/FooterSection";
 import { useState } from "react";
 import Navbar from "../components/Navbar";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { authenticateAPI } from "../action/auth";
+
+/**
+ * LoginPage component.
+ *
+ * A React component that renders a login form for users to authenticate.
+ * It manages input states for email and password, provides feedback for
+ * loading and error states, and handles form submission to authenticate
+ * users using the `authenticateAPI.login` method.
+ *
+ * @returns {React.ReactElement} The rendered component.
+ * @example
+ * import LoginPage from "./LoginPage";
+ *
+ * <LoginPage />
+ */
+
 export default function LoginPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
-    const baseURL = import.meta.env.VITE_API_BASE_URL;
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
@@ -18,14 +33,12 @@ export default function LoginPage() {
 
         try {
             setLoading(true);
-            const response = await axios.post(`${baseURL}/v1/auth/login`, {
-                email,
-                password,
-            });
-
-            localStorage.setItem("token", response.data.token);
-            localStorage.setItem("client", response.data.client.id);
-            navigate("/");
+            const result = await authenticateAPI.login(email, password);
+            if (result.success) {
+                navigate("/");
+            } else {
+                setError(result.error);
+            }
         } catch (err) {
             setError(
                 err.response?.data?.message || "Terjadi kesalahan saat login."

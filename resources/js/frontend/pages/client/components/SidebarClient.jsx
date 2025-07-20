@@ -3,6 +3,11 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { removeToken } from "../../../core/token";
 
+/**
+ * Sidebar component for client dashboard.
+ *
+ * @return {React.ReactElement}
+ */
 export default function SidebarClient() {
     const dropdownRef = useRef(null);
     const baseURL = import.meta.env.VITE_API_BASE_URL;

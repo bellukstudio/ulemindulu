@@ -1,3 +1,7 @@
+/**
+ * FooterSection is a footer component for the Ulemindulu website.
+ * It contains the brand info, payment support, kontak & media, and a copyright notice.
+ */
 export default function FooterSection() {
     const currentYear = new Date().getFullYear();
 

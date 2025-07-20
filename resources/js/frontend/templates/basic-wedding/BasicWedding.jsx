@@ -3,11 +3,12 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import PropTypes from "prop-types";
 
-export default function BasicWedding({ onFinish, to }) {
+export default function BasicWedding({ onFinish, to, data }) {
     const [isClicked, setIsClicked] = useState(false);
     const [recipient, setRecipient] = useState("Teman-teman semua");
 
     const [searchParams] = useSearchParams();
+    const customData = data.custom_data ? JSON.parse(data.custom_data) : {};
 
     useEffect(() => {
         const to = searchParams.get("to");
@@ -51,8 +52,8 @@ export default function BasicWedding({ onFinish, to }) {
                             />
                         </div>
                         <h1 className="text-3xl font-dancing text-gray-900">
-                            Jhon Doe <br /> & <br />
-                            Elisa
+                            {customData.mempelaiPria} <br /> & <br />
+                            {customData.mempelaiWanita}
                         </h1>
                         <div>
                             <p className="text-md text-gray-600">
@@ -92,4 +93,5 @@ export default function BasicWedding({ onFinish, to }) {
 BasicWedding.propTypes = {
     onFinish: PropTypes.func.isRequired,
     to: PropTypes.string,
+    data: PropTypes.object,
 };

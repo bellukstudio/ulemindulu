@@ -47,4 +47,9 @@ class TemplateRepositoryImpl implements TemplateInterface
 
         return $templates->orderBy('created_at', 'desc')->paginate($perPage);
     }
+
+    public function showApi($id)
+    {
+        return InvitationTemplate::findOrFail($id);
+    }
 }

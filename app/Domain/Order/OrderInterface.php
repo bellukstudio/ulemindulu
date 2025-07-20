@@ -10,4 +10,6 @@ interface OrderInterface
     public function update(Order $order, array $data) : bool;
     public function delete(Order $order) : bool;
     //api
+    public function showById($id);
+    public function getAllTemplateOrder(string $search, int $perPage);
 }

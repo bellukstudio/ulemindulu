@@ -44,6 +44,7 @@ class Create extends Component
         ['value' => 'event', 'label' => 'Event'],
         ['value' => 'aqiqah', 'label' => 'Aqiqah'],
         ['value' => 'syukuran', 'label' => 'Syukuran'],
+        ['value' => 'tahlil', 'label' => 'Tahlil'],
     ];
     public $uploadProgress = 0;
     public $uploadedUrl = null;

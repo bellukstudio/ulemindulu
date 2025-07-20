@@ -1,24 +1,45 @@
 "use client";
 import { motion } from "framer-motion";
 import { useSearchParams } from "react-router-dom";
+import PropTypes from "prop-types";
 
-export default function Overview() {
+Overview.propTypes = {
+    data: PropTypes.object,
+};
+export default function Overview({ data }) {
     const [searchParams] = useSearchParams();
     const to = searchParams.get("to") || "Teman teman semua";
+    const customData = data.custom_data ? JSON.parse(data.custom_data) : {};
+
+    const eventStart = new Date(data.event_date);
+    const startISOString =
+        eventStart.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+
+    const eventEnd = new Date(eventStart.getTime() + 2 * 60 * 60 * 1000);
+    const endISOString =
+        eventEnd.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+
     const calendarUrl =
         `https://www.google.com/calendar/render?action=TEMPLATE` +
-        `&text=${encodeURIComponent("Pernikahan Lukman & Masih Mencari")}` +
-        `&dates=20290817T030000Z/20290817T050000Z` +
+        `&text=${encodeURIComponent(
+            `Pernikahan ${customData.mempelaiPria || "Mempelai Pria"} & ${
+                customData.mempelaiWanita || "Mempelai Wanita"
+            }`
+        )}` +
+        `&dates=${startISOString}/${endISOString}` +
         `&details=${encodeURIComponent(
             "Dengan segala kerendahan hati, kami mengundang ke acara pernikahan kami."
         )}` +
-        `&location=${encodeURIComponent("Dukuh Wringin, Slawi")}` +
+        `&location=${encodeURIComponent(data.address || "")}` +
         `&sf=true&output=xml`;
 
     return (
         <div
             className="w-full min-h-screen relative bg-cover bg-center"
-            style={{ backgroundImage: "url('https://res.cloudinary.com/ducsvvqsy/image/upload/v1752223006/template/asset/bg1_y7grmf.png')" }}
+            style={{
+                backgroundImage:
+                    "url('https://res.cloudinary.com/ducsvvqsy/image/upload/v1752223006/template/asset/bg1_y7grmf.png')",
+            }}
         >
             {/* Background overlay */}
             <div className="absolute inset-0 bg-black/40"></div>
@@ -48,11 +69,11 @@ export default function Overview() {
                 {/* Nama mempelai */}
                 <div className="mb-8">
                     <h1 className="text-2xl md:text-3xl font-dancing text-white leading-relaxed">
-                        Jhon Doe
+                        {customData.mempelaiPria}
                         <br />
                         <span className="text-xl md:text-2xl">&</span>
                         <br />
-                        Masih Mencari - Cari
+                        {customData.mempelaiWanita}
                     </h1>
                 </div>
 

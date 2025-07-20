@@ -1,6 +1,12 @@
 import { useState } from "react";
+import PropTypes from "prop-types";
 
-export default function LoveGift() {
+LoveGift.propTypes = {
+    data: PropTypes.object,
+};
+export default function LoveGift({ data }) {
+    const customData = data.custom_data ? JSON.parse(data.custom_data) : {};
+
     const [copiedIndex, setCopiedIndex] = useState(null);
 
     const copyToClipboard = (text, index) => {

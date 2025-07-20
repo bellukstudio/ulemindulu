@@ -1,4 +1,11 @@
-export default function QuranVerse() {
+import PropTypes from "prop-types";
+
+QuranVerse.propTypes = {
+    data: PropTypes.object,
+};
+export default function QuranVerse({ data }) {
+    const customData = data.custom_data ? JSON.parse(data.custom_data) : {};
+
     return (
         <div className="w-full  relative bg-cover bg-center bg-blue-900">
             {/* Background overlay */}
@@ -17,21 +24,10 @@ export default function QuranVerse() {
                 <div className="space-y-6 max-w-2xl mx-auto">
                     <div className="bg-white/15 backdrop-blur-md border border-white/30 rounded-xl p-6 shadow-xl hover:bg-white/20 transition-all duration-300">
                         <h5 className="mb-3 text-sm md:text-md tracking-tight text-white font-mono leading-relaxed">
-                            "Dan segala sesuatu Kami ciptakan berpasang-pasangan
-                            agar kamu mengingat (kebesaran Allah)."
+                            " {customData.isiAyat} "
                         </h5>
                         <p className="font-mono text-amber-200 text-sm">
-                            QS. Adh-Dhariyat: 49
-                        </p>
-                    </div>
-
-                    <div className="bg-white/15 backdrop-blur-md border border-white/30 rounded-xl p-6 shadow-xl hover:bg-white/20 transition-all duration-300">
-                        <h5 className="mb-3 text-sm md:text-md tracking-tight text-white font-mono leading-relaxed">
-                            "Dan sesungguhnya Dialah yang menciptakan pasangan
-                            laki-laki dan perempuan."
-                        </h5>
-                        <p className="font-mono text-amber-200 text-sm">
-                            QS. An-Najm: 45
+                            {customData.ayatQuran}
                         </p>
                     </div>
                 </div>

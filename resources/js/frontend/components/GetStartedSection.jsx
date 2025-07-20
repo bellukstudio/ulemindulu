@@ -1,6 +1,18 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+/**
+ * GetStartedSection is a React component that renders a section for users
+ * to get started by entering their email. It includes a promotional message
+ * with a call-to-action to try the latest invitation templates.
+ *
+ * The component manages the email input state and navigates to the registration
+ * page with the provided email when the form is submitted. It also alerts the
+ * user if the email field is empty.
+ *
+ * @returns {React.ReactElement} The rendered component.
+ */
+
 export default function GetStartedSection() {
     const [email, setEmail] = useState("");
     const navigate = useNavigate();

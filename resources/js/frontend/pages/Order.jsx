@@ -1,20 +1,60 @@
-import { section } from "framer-motion/client";
 import NavbarOrder from "../components/NavbarOrder";
 import { useParams, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { getClientId } from "../core/token";
-import axios from "axios";
-
+import { orderApi } from "../action/order";
+import { templateAPI } from "../action/template";
+import Loading from "./Loading";
+/**
+ * A page to order an invitation template.
+ *
+ * This page allows users to order an invitation template with a given subdomain.
+ * The page will render a form with a text input for the subdomain and a submit button.
+ * When the form is submitted, the page will call the `orderTemplate` function from the `orderApi`
+ * action to create a new order.
+ *
+ * If the order is successful, the page will navigate to the "/app/client/invitations" page.
+ * If the order fails, the page will display an error message.
+ *
+ * The page will also render a loading state while the order is being processed.
+ *
+ * The page will also fetch the template data from the `templateAPI` action and display an error
+ * message if the template is not found.
+ *
+ * @returns {ReactElement} The order page component.
+ */
 export default function Order() {
-    const baseURL = import.meta.env.VITE_API_BASE_URL;
     const navigate = useNavigate();
+    const { id } = useParams();
+    const clientId = getClientId();
+    const currentDate = new Date();
 
     const [subdomain, setSubdomain] = useState("");
-    const [loading, setLoading] = useState(false);
+    const [template, setTemplate] = useState(null);
+    const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
-    const clientId = getClientId();
-    const { id } = useParams();
-    const currentDate = new Date();
+
+    useEffect(() => {
+        const fetchTemplateById = async () => {
+            try {
+                const res = await templateAPI.fetchTemplateByid(id);
+
+                if (res.success) {
+                    setTemplate(res.data);
+                } else {
+                    console.error("Template tidak ditemukan:", res.error);
+                    navigate("/404");
+                }
+            } catch (error) {
+                console.error("Template tidak ditemukan:", error);
+                navigate("/404");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchTemplateById();
+    }, [id, navigate]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -22,33 +62,31 @@ export default function Order() {
 
         try {
             setLoading(true);
-            const response = await axios.post(
-                `${baseURL}/v1/order/order-template`,
-                {
-                    client_id: clientId,
-                    invitation_template_id: id,
-                    order_date: currentDate.toISOString().split("T")[0],
-                    subdomain: subdomain,
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem(
-                            "token"
-                        )}`,
-                    },
-                }
-            );
 
-            navigate("/app/client/invitations");
+            const orderData = {
+                client_id: clientId,
+                invitation_template_id: template.id,
+                order_date: currentDate.toISOString().split("T")[0],
+                subdomain: subdomain,
+            };
+
+            const result = await orderApi.orderTemplate(orderData);
+
+            if (result.success) {
+                navigate("/app/client/invitations");
+            } else {
+                setError(result.error || "Terjadi kesalahan saat memesan.");
+            }
         } catch (err) {
-            setError(
-                err.response?.data?.message ||
-                    "Terjadi kesalahan saat mendaftar."
-            );
+            console.error(err);
+            setError("Terjadi kesalahan saat memesan.");
         } finally {
             setLoading(false);
         }
     };
+
+    if (loading) return <Loading />;
+
     return (
         <>
             <NavbarOrder />

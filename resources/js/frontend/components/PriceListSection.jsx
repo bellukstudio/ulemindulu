@@ -1,5 +1,19 @@
 import { FaCheckCircle } from "react-icons/fa";
 
+/**
+ * PriceListSection
+ *
+ * This component renders a section displaying a list of pricing packages
+ * for the services offered by Ulemindulu. Each package includes details
+ * such as name, price, features, and highlights the most popular package.
+ *
+ * The component utilizes a grid layout to organize the packages and
+ * displays them with various styles based on their properties.
+ *
+ * @returns {JSX.Element} A section containing pricing packages with
+ * names, prices, features, and an option to select a package.
+ */
+
 export default function PriceListSection() {
     const packages = [
         {

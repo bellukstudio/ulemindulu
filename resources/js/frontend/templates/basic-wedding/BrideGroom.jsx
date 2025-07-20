@@ -1,10 +1,20 @@
+import { custom } from "@cloudinary/url-gen/qualifiers/region";
 import { motion } from "framer-motion";
+import PropTypes from "prop-types";
 
-export default function BridgenGroom() {
+BrideGroom.propTypes = {
+    data: PropTypes.object,
+};
+export default function BrideGroom({ data }) {
+    const customData = data.custom_data ? JSON.parse(data.custom_data) : {};
+
     return (
         <div
             className="w-full min-h-screen relative bg-cover bg-center"
-            style={{ backgroundImage: "url('https://res.cloudinary.com/ducsvvqsy/image/upload/v1752223006/template/asset/bg2_ljf3k9.png')" }}
+            style={{
+                backgroundImage:
+                    "url('https://res.cloudinary.com/ducsvvqsy/image/upload/v1752223006/template/asset/bg2_ljf3k9.png')",
+            }}
         >
             {/* Background overlay */}
             <div className="absolute inset-0 bg-black/40"></div>
@@ -47,15 +57,15 @@ export default function BridgenGroom() {
                     </motion.div>
 
                     <h2 className="text-2xl md:text-3xl font-dancing font-bold mb-4">
-                        Jhon doe
+                        {customData.mempelaiPria}
                     </h2>
                     <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 max-w-sm mx-auto">
                         <h2 className="text-sm md:text-md font-mono text-white/90">
-                            Putra dari Bapak Lorem Ipsum
+                            Putra dari Bapak {customData.bpkMempelaiPria}
                             <br />
                             &
                             <br />
-                            Ibu Lorem Ipsum
+                            Ibu {customData.ibuMempelaiPria}
                         </h2>
                     </div>
                 </div>
@@ -85,15 +95,15 @@ export default function BridgenGroom() {
                     </motion.div>
 
                     <h2 className="text-2xl md:text-3xl font-dancing font-bold mb-4">
-                        Lorem Ipsum Dolor Is Amet
+                        {customData.mempelaiWanita}
                     </h2>
                     <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 max-w-sm mx-auto">
                         <h2 className="text-sm md:text-md font-mono text-white/90">
-                            Putri dari Bapak Lorem Ipsum
+                            Putri dari Bapak {customData.bpkMempelaiWanita}
                             <br />
                             &
                             <br />
-                            Ibu Lorem Ipsum
+                            Ibu {customData.ibuMempelaiWanita}
                         </h2>
                     </div>
                 </div>

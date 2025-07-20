@@ -1,3 +1,10 @@
+/**
+ * A navbar with an "Order" label and a back button.
+ *
+ * Renders a simple navbar with a back button and an "Order" label.
+ *
+ * @return {ReactElement} The navbar component.
+ */
 export default function NavbarOrder() {
     return (
         <nav className="bg-white border-gray-200 dark:bg-gray-900">

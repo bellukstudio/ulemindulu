@@ -1,9 +1,14 @@
 "use client";
 
 import { useRef, useState, Suspense } from "react";
-import LandingWrapper from "./LandingWrapper";
+import LandingWrapperBasicWedding from "./LandingWrapperBasicWedding";
 import Invitation from "./Invitation";
-export default function HomeBasicWedding() {
+import PropTypes from "prop-types";
+
+HomeBasicWedding.propTypes = {
+    data: PropTypes.object,
+};
+export default function HomeBasicWedding({ data }) {
     const [showInvitation, setShowInvitation] = useState(false);
     const audioRef = useRef(null);
 
@@ -27,10 +32,10 @@ export default function HomeBasicWedding() {
             />
             {!showInvitation && (
                 <Suspense fallback={<div>Loading...</div>}>
-                    <LandingWrapper onFinish={handleStart} />
+                    <LandingWrapperBasicWedding onFinish={handleStart} data={data} />
                 </Suspense>
             )}
-            {showInvitation && <Invitation />}
+            {showInvitation && <Invitation data={data} />}
         </>
     );
 }

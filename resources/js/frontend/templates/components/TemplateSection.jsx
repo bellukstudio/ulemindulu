@@ -16,6 +16,7 @@ export default function TemplateSection({
         "Event",
         "Aqiqah",
         "Syukuran",
+        "Tahlil",
     ];
 
     const categoryCounts = categories.reduce((acc, cat) => {
@@ -115,13 +116,13 @@ export default function TemplateSection({
                                 <a
                                     href={`/template/${template.slug}`}
                                     target="_blank"
-                                    className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 text-center rounded-3xl mt-5 w-full"
+                                    className="text-sm bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 text-center rounded-3xl mt-5 w-full"
                                 >
                                     Lihat Template
                                 </a>
                                 <a
                                     href={isTokenAvailable() ? `/template-order/${template.id}` : '/login'}
-                                    className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 text-center rounded-3xl mt-5 w-full"
+                                    className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 text-center rounded-3xl mt-5 w-full text-sm"
                                 >
                                     <span className="flex flex-row justify-around space-x-2">
                                         <svg

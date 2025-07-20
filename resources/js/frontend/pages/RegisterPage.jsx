@@ -4,6 +4,17 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
+    /**
+     * RegisterPage component.
+     *
+     * A React component that renders a form to register a new client.
+     *
+     * @returns {React.ReactElement} The rendered component.
+     * @example
+     * import RegisterPage from "./RegisterPage";
+     *
+     * <RegisterPage />
+     */
 export default function RegisterPage() {
     const baseURL = import.meta.env.VITE_API_BASE_URL;
     const [searchParams] = useSearchParams();
