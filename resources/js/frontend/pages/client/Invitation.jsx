@@ -35,6 +35,14 @@ export default function InvitationClient() {
             }
         } catch (err) {
             console.error("Gagal fetch data:", err);
+              navigate("/error", {
+                    state: {
+                        error:
+                            err.response?.data?.errors ||
+                            err.response?.data?.message ||
+                            "Terjadi kesalahan.",
+                    },
+                });
         }
     };
 

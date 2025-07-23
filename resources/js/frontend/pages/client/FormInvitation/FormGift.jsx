@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
 import { giftAPI } from "../../../action/gift";
 import Loading from "../../Loading";
-
+import { toast } from "react-toastify";
 FormGift.propTypes = {
     order: PropTypes.object,
     template: PropTypes.object,
@@ -52,7 +52,7 @@ export default function FormGift({ order, template }) {
      */
     const addBankAccount = () => {
         if (bankAccounts.length >= 5) {
-            alert("Anda hanya dapat menambahkan maksimal 5 rekening");
+            toast.warn("Anda hanya dapat menambahkan maksimal 5 rekening");
             return;
         }
 
@@ -121,17 +121,26 @@ export default function FormGift({ order, template }) {
                 ...bankAccounts,
                 { bank_name: "", account_number: "", receiver_name: "" },
             ]);
+
+            navigate("/error", {
+                state: {
+                    error:
+                        err.response?.data?.errors ||
+                        err.response?.data?.message ||
+                        "Terjadi kesalahan.",
+                },
+            });
         }
     };
 
-/**
- * Handles the form submission for bank accounts.
- * Prevents default form submission behavior, sets loading state, and resets error and success states.
- * Determines whether to create or update bank accounts based on their availability.
- * If bank accounts are not available, it calls the createBankAccount function.
- * Otherwise, it calls the updateBankAccount function.
- * @param {React.FormEvent<HTMLFormElement>} e The form submission event
- */
+    /**
+     * Handles the form submission for bank accounts.
+     * Prevents default form submission behavior, sets loading state, and resets error and success states.
+     * Determines whether to create or update bank accounts based on their availability.
+     * If bank accounts are not available, it calls the createBankAccount function.
+     * Otherwise, it calls the updateBankAccount function.
+     * @param {React.FormEvent<HTMLFormElement>} e The form submission event
+     */
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -165,8 +174,8 @@ export default function FormGift({ order, template }) {
 
             if (result.success) {
                 setSuccess(true);
-                setTimeout(() => {
-                    location.reload();
+                setTimeout(async () => {
+                    await checkBankAccount(orderId, templateId);
                 }, 500);
             } else {
                 setError(result.error);
@@ -178,6 +187,14 @@ export default function FormGift({ order, template }) {
                     err.response?.data?.message ||
                     "Terjadi kesalahan."
             );
+            navigate("/error", {
+                state: {
+                    error:
+                        err.response?.data?.errors ||
+                        err.response?.data?.message ||
+                        "Terjadi kesalahan.",
+                },
+            });
         } finally {
             setLoading(false);
         }
@@ -200,8 +217,8 @@ export default function FormGift({ order, template }) {
 
             if (result.success) {
                 setSuccess(true);
-                setTimeout(() => {
-                    location.reload();
+                setTimeout(async () => {
+                    await checkBankAccount(orderId, templateId);
                 }, 500);
             } else {
                 setError(result.error);
@@ -213,25 +230,35 @@ export default function FormGift({ order, template }) {
                     err.response?.data?.message ||
                     "Terjadi kesalahan."
             );
+            navigate("/error", {
+                state: {
+                    error:
+                        err.response?.data?.errors ||
+                        err.response?.data?.message ||
+                        "Terjadi kesalahan.",
+                },
+            });
         } finally {
             setLoading(false);
         }
     };
 
-/**
- * Deletes a bank account by its ID.
- * @param {number} bankAccount - The ID of the bank account to be deleted.
- * Calls the deleteBankAccount API and reloads the page on success.
- * On failure, it sets an error message.
- */
+    /**
+     * Deletes a bank account by its ID.
+     * @param {number} bankAccount - The ID of the bank account to be deleted.
+     * Calls the deleteBankAccount API and reloads the page on success.
+     * On failure, it sets an error message.
+     */
 
     const deleteBankAccount = async (bankAccount) => {
+        setLoading(true);
         try {
             const result = await giftAPI.deleteBankAccount(bankAccount);
             if (result.success) {
-                setTimeout(() => {
-                    location.reload();
+                setTimeout(async () => {
+                    await checkBankAccount(orderId, templateId);
                 }, 500);
+                setSuccess(true);
             } else {
                 setError(result.error);
             }
@@ -242,6 +269,16 @@ export default function FormGift({ order, template }) {
                     err.response?.data?.message ||
                     "Terjadi kesalahan."
             );
+            navigate("/error", {
+                state: {
+                    error:
+                        err.response?.data?.errors ||
+                        err.response?.data?.message ||
+                        "Terjadi kesalahan.",
+                },
+            });
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -254,7 +291,7 @@ export default function FormGift({ order, template }) {
                     className="p-4 mb-4 text-sm text-green-800 rounded-lg shadow-md bg-green-50 dark:bg-gray-800 dark:text-green-400"
                     role="alert"
                 >
-                    <span className="font-medium">Berhasil disimpan</span>
+                    <span className="font-medium">Successfully</span>
                 </div>
             )}
 

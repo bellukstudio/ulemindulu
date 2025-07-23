@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Application\Order\CreateOrderApiUseCase;
 use App\Application\Order\GetAllTemplateOrderApiUseCase;
 use App\Application\Order\ShowTemplateOrderApiUseCase;
+use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Models\Order\InvitationTemplate;
 use App\Models\User\RegisterClient;
@@ -18,6 +19,11 @@ class OrderController extends Controller
     protected $useCaseShowTemplateOrder;
 
 
+    /**
+     * @param CreateOrderApiUseCase $createOrderApiUseCase
+     * @param GetAllTemplateOrderApiUseCase $getAllTemplateOrderApiUseCase
+     * @param ShowTemplateOrderApiUseCase $showTemplateOrderApiUseCase
+     */
     public function __construct(CreateOrderApiUseCase $createOrderApiUseCase, GetAllTemplateOrderApiUseCase $getAllTemplateOrderApiUseCase, ShowTemplateOrderApiUseCase $showTemplateOrderApiUseCase)
     {
         $this->useCaseCreateOrder = $createOrderApiUseCase;
@@ -68,22 +74,33 @@ class OrderController extends Controller
         ]);
 
         if ($validator->fails()) {
-            $response = response()->json(['errors' => $validator->errors()], 422);
+            $response = ApiResponse::error([
+                'message' => $validator->errors(),
+            ], 'Unprocessable Entity', 422);
         } elseif (!$request->user()) {
-            $response = response()->json(['message' => 'Unauthenticated'], 401);
+            $response = ApiResponse::error([
+                'message' => 'Unauthenticated',
+            ], 'Unauthenticated', 401);
         } elseif (!RegisterClient::find($request->client_id)) {
-            $response = response()->json(['message' => 'Client not found'], 404);
+            $response = ApiResponse::error([
+                'message' => 'Client not found',
+            ], 'Client not found', 404);
         } elseif (!InvitationTemplate::find($request->invitation_template_id)) {
-            $response = response()->json(['message' => 'Template not found'], 404);
+            $response = ApiResponse::error([
+                'message' => 'Invitation template not found',
+            ], 'Invitation template not found', 404);
         } else {
-            $this->useCaseCreateOrder->execute([
+            $order = $this->useCaseCreateOrder->execute([
                 'client_id' => $request->client_id,
                 'invitation_template_id' => $request->invitation_template_id,
                 'order_date' => $request->order_date,
                 'subdomain' => $request->subdomain,
             ]);
 
-            $response = response()->json(['message' => 'Order created successfully'], 201);
+            $response = ApiResponse::success([
+                'message' => 'Order created successfully',
+                'order' => $order
+            ], 'Order created successfully', 201);
         }
 
         return $response;
@@ -129,7 +146,10 @@ class OrderController extends Controller
         $perPage = (int) $request->get('per_page', 10);
         $perPage = $perPage > 100 ? 100 : $perPage;
         $templates = $this->useCaseGetTemplateOrder->execute($search, $perPage);
-        return response()->json($templates);
+        return ApiResponse::success([
+            'template' => $templates,
+            'message' => 'Order template list'
+        ], 'Order template list', 200);
     }
 
     /**
@@ -163,6 +183,13 @@ class OrderController extends Controller
     {
         $order = $this->useCaseShowTemplateOrder->execute($id);
 
-        return response()->json($order);
+        if (!$order) {
+            return ApiResponse::error([
+                'message' => 'Order not found',
+            ], 'Order not found', 404);
+        }
+        return ApiResponse::success([
+            'order' => $order,
+        ], 'Order detail', 200);
     }
 }

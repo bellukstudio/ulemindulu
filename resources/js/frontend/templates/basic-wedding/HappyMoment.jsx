@@ -5,7 +5,7 @@ HappyMoment.propTypes = {
     data: PropTypes.object,
 };
 export default function HappyMoment({ data }) {
-    const customData = data.custom_data ? JSON.parse(data.custom_data) : {};
+   const customData = data.custom_data
 
     const targetDate = data.event_date
         ? new Date(data.event_date)

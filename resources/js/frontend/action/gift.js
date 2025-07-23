@@ -12,6 +12,23 @@ const getAuthHeaders = () => {
 };
 
 export const giftAPI = {
+    // getBankAccount: async (orderId, templateId) => {
+    //     try {
+    //         const response = await axios.get(
+    //             `${baseURL}/v1/general/gift/${orderId}/invitation/${templateId}`
+    //         );
+    //         return { success: true, data: response.data.data.bank };
+    //     } catch (error) {
+    //         console.error("Error saving invitation setting:", error);
+    //         return {
+    //             success: false,
+    //             error:
+    //                 error.response?.data?.meta.message ||
+    //                 "Failed to save invitation setting",
+    //         };
+    //     }
+    // },
+
     createBankAccount: async (data) => {
         try {
             await axios.post(
@@ -25,8 +42,7 @@ export const giftAPI = {
             return {
                 success: false,
                 error:
-                    error.response?.data?.errors || 
-                    error.response?.data?.message ||
+                    error.response?.data?.meta.message ||
                     "Failed to save invitation setting",
             };
         }
@@ -45,8 +61,7 @@ export const giftAPI = {
             return {
                 success: false,
                 error:
-                    error.response?.data?.errors ||
-                    error.response?.data?.message ||
+                    error.response?.data?.meta.message ||
                     "Failed to save invitation setting",
             };
         }
@@ -57,14 +72,17 @@ export const giftAPI = {
                 `${baseURL}/v1/gift/bank-account/${orderId}/${templateId}`,
                 getAuthHeaders()
             );
-            return { success: true, data: response.data.data, status: response.data.status };
+            return {
+                success: true,
+                data: response.data.data.bank,
+                status: response.data.meta.status,
+            };
         } catch (error) {
             console.error("Error saving invitation setting:", error);
             return {
                 success: false,
                 error:
-                    error.response?.data?.errors ||
-                    error.response?.data?.message ||
+                    error.response?.data?.meta.message ||
                     "Failed to save invitation setting",
             };
         }
@@ -82,8 +100,7 @@ export const giftAPI = {
             return {
                 success: false,
                 error:
-                    error.response?.data?.errors ||
-                    error.response?.data?.message ||
+                    error.response?.data?.meta.message ||
                     "Failed to save invitation setting",
             };
         }

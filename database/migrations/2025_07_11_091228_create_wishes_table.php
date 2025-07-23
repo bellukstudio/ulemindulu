@@ -15,7 +15,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->foreignUuid('order_id')->constrained('orders')->cascadeOnDelete();
             $table->foreignUuid('invitation_template_id')->constrained('invitation_templates')->cascadeOnDelete();
-            $table->string('present', 7);
+            $table->string('present', 13);
             $table->string('name', 20);
             $table->string('saying', 100);
             $table->timestamps();

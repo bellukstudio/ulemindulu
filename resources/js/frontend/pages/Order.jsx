@@ -33,6 +33,7 @@ export default function Order() {
     const [template, setTemplate] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const [errors, setErrors] = useState({});
 
     useEffect(() => {
         const fetchTemplateById = async () => {
@@ -47,7 +48,14 @@ export default function Order() {
                 }
             } catch (error) {
                 console.error("Template tidak ditemukan:", error);
-                navigate("/404");
+                navigate("/error", {
+                    state: {
+                        error:
+                            err.response?.data?.errors ||
+                            err.response?.data?.message ||
+                            "Terjadi kesalahan.",
+                    },
+                });
             } finally {
                 setLoading(false);
             }
@@ -75,11 +83,23 @@ export default function Order() {
             if (result.success) {
                 navigate("/app/client/invitations");
             } else {
-                setError(result.error || "Terjadi kesalahan saat memesan.");
+                setErrors(result.errors || {});
             }
         } catch (err) {
             console.error(err);
-            setError("Terjadi kesalahan saat memesan.");
+            setError(
+                err.response?.data?.errors ||
+                    err.response?.data?.message ||
+                    "Terjadi kesalahan."
+            );
+            navigate("/error", {
+                state: {
+                    error:
+                        err.response?.data?.errors ||
+                        err.response?.data?.message ||
+                        "Terjadi kesalahan.",
+                },
+            });
         } finally {
             setLoading(false);
         }
@@ -97,12 +117,17 @@ export default function Order() {
                             {error}
                         </p>
                     )}
+                    {errors.subdomain && (
+                        <p className="text-red-500 text-sm mt-1 text-center">
+                            {errors.subdomain[0]}
+                        </p>
+                    )}
 
                     <form onSubmit={handleSubmit}>
                         <div className="mb-4">
                             <label
                                 htmlFor="subdomain"
-                                className="block text-sm font-medium text-gray-700 mb-1"
+                                className="block text-sm font-medium text-gray-700 mb-2"
                             >
                                 Link Undangan
                             </label>
@@ -121,7 +146,7 @@ export default function Order() {
                                     onChange={(e) =>
                                         setSubdomain(e.target.value)
                                     }
-                                    placeholder="cth. riski-dan-nisa"
+                                    placeholder="cth. wedding-riski-dan-nisa"
                                     className="block w-full pl-36 py-2 text-sm text-gray-900 bg-gray-50 border border-gray-300 rounded-lg"
                                     required
                                 />

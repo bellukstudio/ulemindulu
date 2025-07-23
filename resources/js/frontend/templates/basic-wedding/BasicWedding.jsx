@@ -3,12 +3,12 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import PropTypes from "prop-types";
 
-export default function BasicWedding({ onFinish, to, data }) {
+export default function BasicWedding({ onFinish, to, data, brideGroom }) {
     const [isClicked, setIsClicked] = useState(false);
     const [recipient, setRecipient] = useState("Teman-teman semua");
 
     const [searchParams] = useSearchParams();
-    const customData = data.custom_data ? JSON.parse(data.custom_data) : {};
+    const customData = data.custom_data;
 
     useEffect(() => {
         const to = searchParams.get("to");
@@ -46,7 +46,7 @@ export default function BasicWedding({ onFinish, to, data }) {
                         </h2>
                         <div className="w-60 h-60 mx-auto rounded-full overflow-hidden shadow-xl">
                             <img
-                                src="https://images.unsplash.com/photo-1591604466107-ec97de577aff?w=500&auto=format&fit=crop&q=60"
+                                src={`${brideGroom.image_path}`}
                                 alt="Foto Mempelai"
                                 className="object-cover w-full h-full"
                             />
@@ -94,4 +94,5 @@ BasicWedding.propTypes = {
     onFinish: PropTypes.func.isRequired,
     to: PropTypes.string,
     data: PropTypes.object,
+    brideGroom: PropTypes.object,
 };

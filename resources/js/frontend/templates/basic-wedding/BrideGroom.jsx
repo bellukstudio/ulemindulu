@@ -1,12 +1,12 @@
-import { custom } from "@cloudinary/url-gen/qualifiers/region";
 import { motion } from "framer-motion";
 import PropTypes from "prop-types";
 
 BrideGroom.propTypes = {
     data: PropTypes.object,
+    brideGroom: PropTypes.arrayOf(PropTypes.object),
 };
-export default function BrideGroom({ data }) {
-    const customData = data.custom_data ? JSON.parse(data.custom_data) : {};
+export default function BrideGroom({ data, brideGroom }) {
+    const customData = data.custom_data;
 
     return (
         <div
@@ -34,8 +34,7 @@ export default function BrideGroom({ data }) {
                 {/* Invitation text */}
                 <div className="mb-16">
                     <h2 className="text-sm md:text-md font-mono text-white/90 max-w-2xl mx-auto leading-relaxed">
-                        Tanpa mengurangi rasa hormat, kami mengundang Anda untuk
-                        berkenan menghadiri acara pernikahan kami:
+                        {data.description}
                     </h2>
                 </div>
 
@@ -49,7 +48,7 @@ export default function BrideGroom({ data }) {
                     >
                         <div className="w-48 h-48 md:w-60 md:h-60 mx-auto rounded-full overflow-hidden shadow-2xl mb-8 border-4 border-white/20">
                             <img
-                                src="https://images.unsplash.com/photo-1615109398623-88346a601842?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8bWFufGVufDB8fDB8fHww"
+                                src={brideGroom[1].image_path}
                                 alt="Foto Mempelai Pria"
                                 className="object-cover w-full h-full"
                             />
@@ -87,7 +86,7 @@ export default function BrideGroom({ data }) {
                     >
                         <div className="w-48 h-48 md:w-60 md:h-60 mx-auto rounded-full overflow-hidden shadow-2xl mb-8 border-4 border-white/20">
                             <img
-                                src="https://images.unsplash.com/photo-1481214110143-ed630356e1bb?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8d29tZW58ZW58MHx8MHx8fDA%3D"
+                                src={brideGroom[2].image_path}
                                 alt="Foto Mempelai Wanita"
                                 className="object-cover w-full h-full"
                             />

@@ -20,18 +20,29 @@ export default function ListTemplate() {
         setError(null);
 
         try {
-            const result = await templateAPI.fetchTemplates(page, pagination.per_page);
+            const result = await templateAPI.fetchTemplates(
+                page,
+                pagination.per_page
+            );
 
             if (result.success) {
                 setTemplates(result.data);
                 setPagination(result.pagination);
             } else {
-            setError(result.error);
+                setError(result.error);
                 setTemplates([]);
             }
         } catch (err) {
             setError("Terjadi kesalahan saat memuat template");
             setTemplates([]);
+            navigate("/error", {
+                state: {
+                    error:
+                        err.response?.data?.errors ||
+                        err.response?.data?.message ||
+                        "Terjadi kesalahan.",
+                },
+            });
         } finally {
             setLoading(false);
         }

@@ -11,3 +11,16 @@ export function formatRupiah(number) {
         minimumFractionDigits: 0,
     }).format(number);
 }
+
+export function formatDateID(date) {
+    const d = new Date(date);
+    if (isNaN(d.getTime())) {
+        return "-";
+    }
+
+    return new Intl.DateTimeFormat("id-ID", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+    }).format(d);
+}

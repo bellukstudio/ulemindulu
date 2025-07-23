@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-
+import { toast } from "react-toastify";
 InvitationCard.propTypes = {
     invitations: PropTypes.arrayOf(
         PropTypes.shape({
@@ -48,6 +48,12 @@ export default function InvitationCard({ invitations }) {
         };
     }, []);
 
+    const copyToClipboard = (text) => {
+        navigator.clipboard.writeText(text);
+        toast.success("Url berhasil disalin");
+        setActiveMenuId(null);
+    };
+
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-4">
             {invitations.map((invitation) => (
@@ -68,8 +74,9 @@ export default function InvitationCard({ invitations }) {
                                 Undangan {invitation.invitation_template.type} ({" "}
                                 {invitation.invitation_template.template_name} )
                             </h2>
+                            <i className="text-xs">{invitation.subdomain}</i>
                             <p className="text-xs text-gray-400">
-                                Dibuat: {" "}
+                                Dibuat:{" "}
                                 {new Date(
                                     invitation.created_at
                                 ).toLocaleDateString("id-ID", {
@@ -121,6 +128,19 @@ export default function InvitationCard({ invitations }) {
                                             ✏️ Edit
                                         </li>
                                     </a>
+                                    <button
+                                        type="button"
+                                        className="w-full text-left"
+                                        onClick={() =>
+                                            copyToClipboard(
+                                                `${baseURL}/${invitation.subdomain}`
+                                            )
+                                        }
+                                    >
+                                        <li className="hover:bg-gray-100 dark:hover:bg-gray-700 px-4 py-2 cursor-pointer">
+                                            🔗 Salin Link
+                                        </li>
+                                    </button>
                                     <a
                                         href={`${baseURL}/${invitation.subdomain}`}
                                         target="_blank"

@@ -17,6 +17,7 @@ class AlbumPhoto extends Model
         'invitation_template_id',
         'image_path',
         'position',
+        'album_public_id'
     ];
 
 

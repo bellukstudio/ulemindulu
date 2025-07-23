@@ -5,11 +5,12 @@ import PropTypes from "prop-types";
 
 Overview.propTypes = {
     data: PropTypes.object,
+    brideGroom: PropTypes.object,
 };
-export default function Overview({ data }) {
+export default function Overview({ data, brideGroom }) {
     const [searchParams] = useSearchParams();
     const to = searchParams.get("to") || "Teman teman semua";
-    const customData = data.custom_data ? JSON.parse(data.custom_data) : {};
+    const customData = data.custom_data;
 
     const eventStart = new Date(data.event_date);
     const startISOString =
@@ -58,10 +59,10 @@ export default function Overview({ data }) {
                     whileInView={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 1, ease: "easeIn" }}
                     viewport={{ once: true }}
-                    className="w-48 h-48 md:w-60 md:h-50 mx-auto rounded-full overflow-hidden shadow-2xl mb-8 border-4 border-white/20"
+                    className="w-48 h-48 md:w-60 md:h-60 mx-auto rounded-full overflow-hidden shadow-2xl mb-8 border-4 border-white/20"
                 >
                     <img
-                        src="https://images.unsplash.com/photo-1591604466107-ec97de577aff?w=500&auto=format&fit=crop&q=60"
+                        src={`${brideGroom.image_path}`}
                         alt="Foto Mempelai Pria"
                         className="object-cover w-full h-full"
                     />

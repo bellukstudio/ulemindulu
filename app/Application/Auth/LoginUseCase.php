@@ -2,22 +2,22 @@
 
 namespace App\Application\Auth;
 
-use App\Domain\Auth\LoginInterface;
+use App\Domain\Auth\AuthInterface;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Auth;
 
 class LoginUseCase
 {
-    private LoginInterface $loginInterface;
+    private AuthInterface $authInterface;
 
-    public function __construct(LoginInterface $loginInterface)
+    public function __construct(AuthInterface $authInterface)
     {
-        $this->loginInterface = $loginInterface;
+        $this->authInterface = $authInterface;
     }
 
     public function execute(array $credentials) : void
     {
-        if(!$this->loginInterface->login($credentials['email'], $credentials['password'])) {
+        if(!$this->authInterface->login($credentials['email'], $credentials['password'])) {
             throw ValidationException::withMessages([
                 'email' => ['The email credentials are incorrect.'],
 

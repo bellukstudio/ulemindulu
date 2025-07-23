@@ -13,21 +13,25 @@ export const authenticateAPI = {
      */
     login: async (email, password) => {
         try {
-            const response = await axios.post(`${baseURL}/v1/auth/login`, {
-                email,
-                password,
-            });
+            const response = await axios.post(
+                `${baseURL}/v1/general/auth/login`,
+                {
+                    email,
+                    password,
+                }
+            );
 
-            localStorage.setItem("token", response.data.token);
-            localStorage.setItem("client", response.data.client.id);
+            localStorage.setItem("token", response.data.data.token);
+            localStorage.setItem("client", response.data.data.client.id);
             return {
                 success: true,
-                data: response.data,
+                data: response.data.data,
             };
         } catch (error) {
             return {
                 success: false,
                 error:
+                    error.response?.data?.errors ||
                     error.response?.data?.message ||
                     "Terjadi kesalahan saat login.",
             };
@@ -62,6 +66,7 @@ export const authenticateAPI = {
             return {
                 success: false,
                 error:
+                    error.response?.data?.errors ||
                     error.response?.data?.message ||
                     "Terjadi kesalahan saat logout.",
             };

@@ -81,7 +81,7 @@ export default function FormSettings({ order, template }) {
 
             if (result.data.status) {
                 setIsUpdate(true);
-                const data = result.data.data;
+                const data = result.data.invitation;
 
                 setSettingsId(data.id);
 
@@ -100,6 +100,14 @@ export default function FormSettings({ order, template }) {
             }
         } catch (err) {
             console.error(err);
+            navigate("/error", {
+                state: {
+                    error:
+                        err.response?.data?.errors ||
+                        err.response?.data?.message ||
+                        "Terjadi kesalahan.",
+                },
+            });
         } finally {
             setLoading(false);
         }
@@ -197,7 +205,7 @@ export default function FormSettings({ order, template }) {
                     payload
                 );
                 if (result.success) {
-                    location.reload();
+                    await fetchAvailableSettings(orderId);
                 } else {
                     setError(result.error || "Terjadi kesalahan saat edit.");
                 }
@@ -216,6 +224,14 @@ export default function FormSettings({ order, template }) {
         } catch (err) {
             console.error(err);
             setError("Terjadi kesalahan saat edit.");
+            navigate("/error", {
+                state: {
+                    error:
+                        err.response?.data?.errors ||
+                        err.response?.data?.message ||
+                        "Terjadi kesalahan.",
+                },
+            });
         } finally {
             setLoading(false);
         }
@@ -290,7 +306,7 @@ export default function FormSettings({ order, template }) {
                             htmlFor="description"
                             className="block text-gray-700 font-medium mb-2"
                         >
-                            Description
+                            Ucapan hormat
                         </label>
                         <textarea
                             id="description"
@@ -368,6 +384,7 @@ export default function FormSettings({ order, template }) {
                                 <textarea
                                     name={key}
                                     value={value}
+                                    rows={5}
                                     onChange={handleChange}
                                     className="w-full border border-gray-300 px-3 py-2 rounded"
                                 />

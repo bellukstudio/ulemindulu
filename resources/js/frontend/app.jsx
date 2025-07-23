@@ -14,76 +14,99 @@ import InvitationClient from "./pages/client/Invitation";
 import DetailInvitation from "./pages/client/DetailInvitation";
 import NotFound from "./pages/NotFound";
 import InvitationPage from "./pages/InvitationPage";
+import ErrorPage from "./pages/ErrorPage";
+import dummyTemplateWedding, { dummyGift } from "./core/data/weddingDummny";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 const App = () => {
     return (
-        <Router>
-            <Routes>
-                <Route path="/" element={<HomePage />} />
-                <Route path="/templates" element={<ListTemplate />} />
-                <Route
-                    path="/register"
-                    element={
-                        <GuestRoute>
-                            <RegisterPage />
-                        </GuestRoute>
-                    }
-                />
-                <Route
-                    path="/login"
-                    element={
-                        <GuestRoute>
-                            <LoginPage />
-                        </GuestRoute>
-                    }
-                />
+        <>
+            <Router>
+                <Routes>
+                    <Route path="/" element={<HomePage />} />
+                    <Route path="/templates" element={<ListTemplate />} />
+                    <Route
+                        path="/register"
+                        element={
+                            <GuestRoute>
+                                <RegisterPage />
+                            </GuestRoute>
+                        }
+                    />
+                    <Route
+                        path="/login"
+                        element={
+                            <GuestRoute>
+                                <LoginPage />
+                            </GuestRoute>
+                        }
+                    />
 
-                <Route
-                    path="/template-order/:id"
-                    element={
-                        <PrivateRoute>
-                            <Order />
-                        </PrivateRoute>
-                    }
-                />
+                    <Route
+                        path="/template-order/:id"
+                        element={
+                            <PrivateRoute>
+                                <Order />
+                            </PrivateRoute>
+                        }
+                    />
 
-                {/* App client */}
-                <Route
-                    path="/app/client"
-                    element={
-                        <PrivateRoute>
-                            <DashboardClient />
-                        </PrivateRoute>
-                    }
-                />
-                <Route
-                    path="/app/client/invitations"
-                    element={
-                        <PrivateRoute>
-                            <InvitationClient />
-                        </PrivateRoute>
-                    }
-                />
-                <Route
-                    path="/app/client/invitations/edit/:id"
-                    element={
-                        <PrivateRoute>
-                            <DetailInvitation />
-                        </PrivateRoute>
-                    }
-                />
+                    {/* App client */}
+                    <Route
+                        path="/app/client"
+                        element={
+                            <PrivateRoute>
+                                <DashboardClient />
+                            </PrivateRoute>
+                        }
+                    />
+                    <Route
+                        path="/app/client/invitations"
+                        element={
+                            <PrivateRoute>
+                                <InvitationClient />
+                            </PrivateRoute>
+                        }
+                    />
+                    <Route
+                        path="/app/client/invitations/edit/:id"
+                        element={
+                            <PrivateRoute>
+                                <DetailInvitation />
+                            </PrivateRoute>
+                        }
+                    />
 
-                <Route path="/404" element={<NotFound />} />
-                <Route path="*" element={<NotFound />} />
-                <Route path="/:slug" element={<InvitationPage />} />
-                {/* Template */}
+                    <Route path="/404" element={<NotFound />} />
+                    <Route path="*" element={<NotFound />} />
+                    <Route path="/error" element={<ErrorPage />} />
+                    <Route path="/:slug" element={<InvitationPage />} />
+                    {/* Template */}
 
-                {/* Basic Template */}
-                <Route
-                    path="/template/basic-wedding"
-                    element={<HomeBasicWedding />}
-                />
-            </Routes>
-        </Router>
+                    {/* Basic Template */}
+                    <Route
+                        path="/template/basic-wedding/preview"
+                        element={
+                            <HomeBasicWedding
+                                isPreview={true}
+                                data={dummyTemplateWedding}
+                                gift={dummyGift}
+                            />
+                        }
+                    />
+                </Routes>
+            </Router>
+            <ToastContainer
+                position="top-right"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                pauseOnHover
+                draggable
+                theme="colored"
+            />
+        </>
     );
 };
 

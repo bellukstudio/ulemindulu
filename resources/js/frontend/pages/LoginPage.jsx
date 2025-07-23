@@ -3,7 +3,7 @@ import { useState } from "react";
 import Navbar from "../components/Navbar";
 import { useNavigate } from "react-router-dom";
 import { authenticateAPI } from "../action/auth";
-
+import Loading from "./Loading";
 /**
  * LoginPage component.
  *
@@ -48,6 +48,7 @@ export default function LoginPage() {
         }
     };
 
+    if(loading) return <Loading />
     return (
         <>
             <Navbar />

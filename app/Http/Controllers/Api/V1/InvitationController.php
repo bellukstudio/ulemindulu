@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Application\Gift\GetAllBankAccountApiUseCase;
 use App\Application\Invitation\CheckInvitationApiUseCase;
 use App\Application\Invitation\CreateInvitationApiUseCase;
 use App\Application\Invitation\UpdateInvitationApiUseCase;
+use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Insfrastructure\Invitation\InvitationRepositoryImpl;
+use App\Models\Invitation\AlbumPhoto;
 use App\Models\Invitation\InvitationSetting;
 use App\Models\Order\InvitationTemplate;
 use App\Models\Order\Order;
@@ -18,13 +21,28 @@ class InvitationController extends Controller
     protected $useCaseCreateInvitation;
     protected $useCaseUpdateInvitation;
     protected $useCaseCheckInvitation;
+    protected $useCaseGetBankAccount;
 
-    public function __construct(CreateInvitationApiUseCase $createInvitationApiUseCase,
-    UpdateInvitationApiUseCase $updateInvitationApiUseCase, CheckInvitationApiUseCase $checkInvitationApiUseCase)
-    {
+
+    /**
+     * Create a new controller instance.
+     *
+     * @param CreateInvitationApiUseCase $createInvitationApiUseCase
+     * @param UpdateInvitationApiUseCase $updateInvitationApiUseCase
+     * @param CheckInvitationApiUseCase $checkInvitationApiUseCase
+     * @param GetAllBankAccountApiUseCase $useCaseGetBankAccount
+     * @return void
+     */
+    public function __construct(
+        CreateInvitationApiUseCase $createInvitationApiUseCase,
+        UpdateInvitationApiUseCase $updateInvitationApiUseCase,
+        CheckInvitationApiUseCase $checkInvitationApiUseCase,
+        GetAllBankAccountApiUseCase $useCaseGetBankAccount,
+    ) {
         $this->useCaseCreateInvitation = $createInvitationApiUseCase;
         $this->useCaseUpdateInvitation = $updateInvitationApiUseCase;
         $this->useCaseCheckInvitation = $checkInvitationApiUseCase;
+        $this->useCaseGetBankAccount = $useCaseGetBankAccount;
     }
 
 
@@ -89,7 +107,9 @@ class InvitationController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
+            return ApiResponse::error([
+                'message' => $validator->errors()
+            ], 'Validation error', 422);
         }
 
         $data = $validator->validated();
@@ -97,9 +117,9 @@ class InvitationController extends Controller
 
         $this->useCaseCreateInvitation->execute($data);
 
-        return response()->json([
-            'message' => 'Invitation created successfully',
-        ]);
+        return ApiResponse::success([
+            'message' => 'Invitation created successfully'
+        ], 'Invitation created successfully', 201);
     }
     /**
      * Update the specified invitation in storage.
@@ -109,6 +129,54 @@ class InvitationController extends Controller
      * @return \Illuminate\Http\Response
      */
 
+    /**
+     * Update the specified invitation settings in storage.
+     *
+     * @bodyParam description string The description of the invitation.
+     * @bodyParam order_id int The ID of the order.
+     * @bodyParam invitation_template_id int The ID of the invitation template.
+     * @bodyParam event_date date The date of the event.
+     * @bodyParam event_time string The time of the event.
+     * @bodyParam timezone string The timezone of the event.
+     * @bodyParam address string The address of the event.
+     * @bodyParam location string The location of the event.
+     * @bodyParam backsound string The backsound of the event.
+     * @bodyParam custom_data array The custom data of the invitation.
+     *
+     * @response 200 {
+     *   "message": "Invitation updated successfully",
+     * }
+     *
+     * @response 422 {
+     *   "errors": {
+     *     "description": [
+     *       "The description field is required."
+     *     ],
+     *     "order_id": [
+     *       "The order id field is required."
+     *     ],
+     *     "invitation_template_id": [
+     *       "The invitation template id field is required."
+     *     ],
+     *     "event_date": [
+     *       "The event date field is required."
+     *     ],
+     *     "event_time": [
+     *       "The event time field is required."
+     *     ],
+     *     "timezone": [
+     *       "The timezone field is required."
+     *     ],
+     *     "address": [
+     *       "The address field is required."
+     *     ]
+     *   }
+     * }
+     *
+     * @response 404 {
+     *   "message": "Invitation not found",
+     * }
+     */
     public function updateInvitationSettings(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
@@ -125,7 +193,9 @@ class InvitationController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
+            return ApiResponse::error([
+                'message' => $validator->errors()
+            ], 'Validation error', 422);
         }
 
         $data = $validator->validated();
@@ -135,14 +205,16 @@ class InvitationController extends Controller
 
         $invitation = InvitationSetting::find($id);
         if (!$invitation) {
-            return response()->json(['message' => 'Invitation not found'], 404);
+            return ApiResponse::error([
+                'message' => 'Invitation not found'
+            ], 'Invitation not found', 404);
         }
 
         $this->useCaseUpdateInvitation->execute($invitation, $data);
 
-        return response()->json([
-            'message' => 'Invitation updated successfully',
-        ]);
+        return ApiResponse::success([
+            'message' => 'Invitation updated successfully'
+        ], 'Invitation updated successfully', 200);
     }
 
 
@@ -157,16 +229,16 @@ class InvitationController extends Controller
         $checking = $this->useCaseCheckInvitation->execute($orderId);
 
         if ($checking) {
-            return response()->json([
+            return ApiResponse::success([
                 'message' => 'Invitation settings found',
                 'status' => true,
-                'data' => $checking
-            ]);
+                'invitation' => $checking
+            ], 'Invitation settings found', 200);
         } else {
-            return response()->json([
+            return ApiResponse::error([
                 'message' => 'Invitation settings not found',
-                'status' => false
-            ]);
+                'status' => false,
+            ], 'Invitation settings not found', 404);
         }
     }
 
@@ -190,9 +262,9 @@ class InvitationController extends Controller
 
         $template = InvitationTemplate::find($order->invitation_template_id);
         if (!$template) {
-            return response()->json([
-                'message' => 'Template not found',
-            ], 404);
+            return ApiResponse::error([
+                'message' => 'Template not found'
+            ], 'Template not found', 404);
         }
 
         $invitationSettings = InvitationSetting::where('order_id', $order->id)
@@ -200,14 +272,21 @@ class InvitationController extends Controller
             ->first();
 
         if (!$invitationSettings) {
-            return response()->json([
-                'message' => 'Invitation settings not found',
-            ], 404);
+            return ApiResponse::error([
+                'message' => 'Invitation settings not found'
+            ], 'Invitation settings not found', 404);
         }
 
-        return response()->json([
-            'data' => $template,
+        $album = AlbumPhoto::where('order_id', $order->id)->get();
+
+        $bankAccounts = $this->useCaseGetBankAccount->execute($order->id, $template->id);
+
+        return ApiResponse::success([
+            'message' => 'Template and invitation settings found',
+            'template' => $template,
             'invitationSettings' => $invitationSettings,
-        ]);
+            'gift' => $bankAccounts,
+            'album' => $album
+        ], 'Template and invitation settings found', 200);
     }
 }

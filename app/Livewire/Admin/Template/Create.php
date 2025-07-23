@@ -4,6 +4,7 @@ namespace App\Livewire\Admin\Template;
 
 use App\Application\Template\CreateTemplateUseCase;
 use App\Models\Order\InvitationTemplate;
+use App\Traits\RemoveFolderLivewireTemp;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
@@ -11,7 +12,7 @@ use Livewire\WithFileUploads;
 
 class Create extends Component
 {
-    use WithFileUploads;
+    use WithFileUploads, RemoveFolderLivewireTemp;
 
     #[Validate('required')]
     public $templateName;
@@ -63,6 +64,7 @@ class Create extends Component
 
             $this->uploadedUrl = $uploadedFile['secure_url'];
             $this->publicId = $uploadedFile['public_id'];
+            $this->removeFileFromFolderTmp();
             session()->flash('message', 'Image uploaded successfully!');
         } catch (\Exception $e) {
             $this->addError('thumbnail', 'Failed to upload image: ' . $e->getMessage());

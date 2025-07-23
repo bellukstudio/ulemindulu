@@ -7,8 +7,11 @@ import PropTypes from "prop-types";
 
 HomeBasicWedding.propTypes = {
     data: PropTypes.object,
+    gift: PropTypes.arrayOf(PropTypes.object),
+    isPreview: PropTypes.bool,
+    album: PropTypes.arrayOf(PropTypes.object),
 };
-export default function HomeBasicWedding({ data }) {
+export default function HomeBasicWedding({ data, gift, isPreview, album }) {
     const [showInvitation, setShowInvitation] = useState(false);
     const audioRef = useRef(null);
 
@@ -32,10 +35,16 @@ export default function HomeBasicWedding({ data }) {
             />
             {!showInvitation && (
                 <Suspense fallback={<div>Loading...</div>}>
-                    <LandingWrapperBasicWedding onFinish={handleStart} data={data} />
+                    <LandingWrapperBasicWedding
+                        onFinish={handleStart}
+                        data={data}
+                        brideGroom={album[0]}
+                    />
                 </Suspense>
             )}
-            {showInvitation && <Invitation data={data} />}
+            {showInvitation && (
+                <Invitation data={data} gift={gift} isPreview={isPreview} album={album} />
+            )}
         </>
     );
 }

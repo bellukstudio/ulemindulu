@@ -2,11 +2,16 @@ import { useState } from "react";
 import PropTypes from "prop-types";
 
 LoveGift.propTypes = {
-    data: PropTypes.object,
+    gift: PropTypes.arrayOf(
+        PropTypes.shape({
+            id: PropTypes.number.isRequired,
+            bank_name: PropTypes.string.isRequired,
+            account_number: PropTypes.string.isRequired,
+            receiver_name: PropTypes.string.isRequired,
+        })
+    ),
 };
-export default function LoveGift({ data }) {
-    const customData = data.custom_data ? JSON.parse(data.custom_data) : {};
-
+export default function LoveGift({ gift }) {
     const [copiedIndex, setCopiedIndex] = useState(null);
 
     const copyToClipboard = (text, index) => {
@@ -15,19 +20,6 @@ export default function LoveGift({ data }) {
             setTimeout(() => setCopiedIndex(null), 2000);
         });
     };
-
-    const dataRekening = [
-        {
-            nama: "Muh. Lukman Akbar",
-            norek: "1234567890",
-            bank: "Bank BCA",
-        },
-        {
-            nama: "Masih Mencari",
-            norek: "9876543210",
-            bank: "Bank Mandiri",
-        },
-    ];
 
     return (
         <div className="w-full relative bg-cover bg-center bg-blue-900">
@@ -43,21 +35,24 @@ export default function LoveGift({ data }) {
                 </h2>
 
                 <div className="space-y-6 max-w-md mx-auto mt-10">
-                    {dataRekening.map((data, index) => (
+                    {gift.map((data, index) => (
                         <div
                             key={index}
                             className="bg-white shadow-md rounded-xl p-6 border border-gray-200"
                         >
                             <p className="text-lg font-semibold text-gray-800 mb-1">
-                                {data.nama}
+                                {data.receiver_name}
                             </p>
                             <div className="flex items-center justify-between bg-gray-100 rounded-md p-2 mb-2">
                                 <span className="text-sm font-mono text-black">
-                                    {data.norek}
+                                    {data.account_number}
                                 </span>
                                 <button
                                     onClick={() =>
-                                        copyToClipboard(data.norek, index)
+                                        copyToClipboard(
+                                            data.account_number,
+                                            index
+                                        )
                                     }
                                     className="text-xs font-mono text-blue-500 hover:underline"
                                 >
@@ -67,7 +62,7 @@ export default function LoveGift({ data }) {
                                 </button>
                             </div>
                             <p className="text-sm text-gray-600 font-mono">
-                                {data.bank}
+                                {data.bank_name}
                             </p>
                         </div>
                     ))}

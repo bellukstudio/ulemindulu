@@ -6,6 +6,8 @@ use App\Application\Template\DeleteTemplateUseCase;
 use App\Application\Template\GetAllTemplateUseCase;
 use App\Models\Order\InvitationTemplate;
 use App\Models\Packet\Packet;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
+use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -27,10 +29,24 @@ class Index extends Component
         $this->resetPage();
     }
 
+    /**
+     * Delete a template.
+     *
+     * @param InvitationTemplate $template
+     *
+     * @throws \Exception
+     */
     public function delete(InvitationTemplate $template)
     {
         try {
             $deleteUseCase = app(DeleteTemplateUseCase::class);
+            if ($template->thumbnail_public_id) {
+                try {
+                    Cloudinary::uploadApi()->destroy($template->thumbnail_public_id);
+                } catch (\Exception $e) {
+                    Log::warning('Failed to delete old thumbnail: ' . $e->getMessage());
+                }
+            }
             $deleteUseCase->execute($template);
             session()->flash('message', 'Template deleted successfully!');
         } catch (\Exception $e) {

@@ -4,7 +4,7 @@ QuranVerse.propTypes = {
     data: PropTypes.object,
 };
 export default function QuranVerse({ data }) {
-    const customData = data.custom_data ? JSON.parse(data.custom_data) : {};
+   const customData = data.custom_data
 
     return (
         <div className="w-full  relative bg-cover bg-center bg-blue-900">

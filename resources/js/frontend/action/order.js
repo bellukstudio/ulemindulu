@@ -1,4 +1,3 @@
-import { data } from "autoprefixer";
 import axios from "axios";
 
 const baseURL = import.meta.env.VITE_API_BASE_URL;
@@ -45,16 +44,21 @@ export const orderApi = {
 
             return {
                 success: true,
-                data: response.data.id,
-                message: response.data.message,
+                data: response.data.data.order,
+                message: response.data.meta.message,
             };
         } catch (error) {
             console.error("Error ordering template:", error);
+
+            const validationErrors = error.response?.data?.data.message || null;
+            const message =
+                error.response?.data?.meta.message ||
+                "Terjadi kesalahan saat memesan template";
+
             return {
                 success: false,
-                error:
-                    error.response?.data?.message ||
-                    "Terjadi kesalahan saat memesan template",
+                error: message,
+                errors: validationErrors,
                 data: null,
             };
         }
@@ -83,14 +87,14 @@ export const orderApi = {
             );
             return {
                 success: true,
-                data: response.data,
-                message: response.data.message,
+                data: response.data.data.order,
+                message: response.data.meta.message,
             };
         } catch (error) {
             return {
                 success: false,
                 error:
-                    error.response?.data?.message ||
+                    error.response?.data?.meta.message ||
                     "Terjadi kesalahan saat mengambil data order",
                 data: null,
             };

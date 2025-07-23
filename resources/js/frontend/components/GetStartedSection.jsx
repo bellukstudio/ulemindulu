@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import { toast } from "react-toastify";
 /**
  * GetStartedSection is a React component that renders a section for users
  * to get started by entering their email. It includes a promotional message
@@ -19,7 +19,7 @@ export default function GetStartedSection() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (!email) return alert("Email wajib diisi!");
+        if (!email) return toast.warn("Email wajib diisi!");
         navigate(`/register?email=${encodeURIComponent(email)}`);
     };
 

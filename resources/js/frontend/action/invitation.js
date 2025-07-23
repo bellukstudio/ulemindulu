@@ -27,12 +27,12 @@ export const invitationAPI = {
             );
             return {
                 success: true,
-                data: response.data.data,
+                data: response.data.data.template.data,
                 pagination: {
-                    current_page: response.data.current_page,
-                    last_page: response.data.last_page,
-                    total: response.data.total,
-                    per_page: response.data.per_page,
+                    current_page: response.data.data.template.current_page,
+                    last_page: response.data.data.template.last_page,
+                    total: response.data.data.template.total,
+                    per_page: response.data.data.template.per_page,
                 },
             };
         } catch (error) {
@@ -40,7 +40,7 @@ export const invitationAPI = {
             return {
                 success: false,
                 error:
-                    error.response?.data?.message ||
+                    error.response?.data?.meta.message ||
                     "Failed to fetch templates",
                 data: [],
                 pagination: {
@@ -73,6 +73,7 @@ export const invitationAPI = {
             return {
                 success: false,
                 error:
+                    error.response?.data?.errors ||
                     error.response?.data?.message ||
                     "Failed to save invitation setting",
             };
@@ -93,6 +94,7 @@ export const invitationAPI = {
             return {
                 success: false,
                 error:
+                    error.response?.data?.errors ||
                     error.response?.data?.message ||
                     "Failed to save invitation setting",
             };
@@ -112,14 +114,14 @@ export const invitationAPI = {
             );
             return {
                 success: true,
-                data: response.data,
+                data: response.data.data,
             };
         } catch (error) {
             console.error("Error checking invitation setting:", error);
             return {
                 success: false,
                 error:
-                    error.response?.data?.message ||
+                    error.response?.data?.meta.message ||
                     "Failed to check invitation setting",
             };
         }
@@ -133,12 +135,12 @@ export const invitationAPI = {
     getSubDomainInvitation: async (subdomain) => {
         try {
             const response = await axios.get(
-                `${baseURL}/v1/settings/invitation/${subdomain}`,
+                `${baseURL}/v1/general/invitation/${subdomain}`,
                 getAuthHeaders()
             );
             return {
                 success: true,
-                data: response.data,
+                data: response.data.data,
             };
         } catch (error) {
             console.error("Error checking invitation setting:", error);

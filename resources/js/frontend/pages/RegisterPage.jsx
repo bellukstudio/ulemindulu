@@ -4,17 +4,17 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-    /**
-     * RegisterPage component.
-     *
-     * A React component that renders a form to register a new client.
-     *
-     * @returns {React.ReactElement} The rendered component.
-     * @example
-     * import RegisterPage from "./RegisterPage";
-     *
-     * <RegisterPage />
-     */
+/**
+ * RegisterPage component.
+ *
+ * A React component that renders a form to register a new client.
+ *
+ * @returns {React.ReactElement} The rendered component.
+ * @example
+ * import RegisterPage from "./RegisterPage";
+ *
+ * <RegisterPage />
+ */
 export default function RegisterPage() {
     const baseURL = import.meta.env.VITE_API_BASE_URL;
     const [searchParams] = useSearchParams();
@@ -53,10 +53,20 @@ export default function RegisterPage() {
                 password,
             });
 
-            localStorage.setItem("token", response.data.token);
+            localStorage.setItem("token", response.data.data.token);
             navigate("/login");
         } catch (err) {
-            setError(err.response?.data?.message || "Terjadi kesalahan saat mendaftar.");
+            setError(
+                err.response?.data?.meta.message ||
+                    "Terjadi kesalahan saat mendaftar."
+            );
+            navigate("/error", {
+                state: {
+                    error:
+                        err.response?.data?.meta.message ||
+                        "Terjadi kesalahan saat mendaftar.",
+                },
+            });
         } finally {
             setLoading(false);
         }
@@ -67,14 +77,27 @@ export default function RegisterPage() {
             <Navbar />
             <section className="flex items-center justify-center min-h-screen pt-24 bg-[url('https://flowbite.s3.amazonaws.com/docs/jumbotron/hero-pattern.svg')]">
                 <div className="bg-white shadow-xl rounded-2xl p-8 w-full max-w-md">
-                    <h2 className="text-2xl font-bold text-center text-gray-800 mb-2">Daftar Akun Baru</h2>
-                    <p className="text-sm text-gray-500 text-center mb-6">Masukkan data kamu dengan benar untuk membuat akun.</p>
+                    <h2 className="text-2xl font-bold text-center text-gray-800 mb-2">
+                        Daftar Akun Baru
+                    </h2>
+                    <p className="text-sm text-gray-500 text-center mb-6">
+                        Masukkan data kamu dengan benar untuk membuat akun.
+                    </p>
 
-                    {error && <p className="text-red-500 mb-4 text-sm text-center">{error}</p>}
+                    {error && (
+                        <p className="text-red-500 mb-4 text-sm text-center">
+                            {error}
+                        </p>
+                    )}
 
                     <form onSubmit={handleSubmit}>
                         <div className="mb-4">
-                            <label htmlFor="name" className="block text-sm font-medium text-gray-700">Nama Kamu</label>
+                            <label
+                                htmlFor="name"
+                                className="block text-sm font-medium text-gray-700"
+                            >
+                                Nama Kamu
+                            </label>
                             <input
                                 type="text"
                                 id="name"
@@ -87,7 +110,12 @@ export default function RegisterPage() {
                         </div>
 
                         <div className="mb-4">
-                            <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
+                            <label
+                                htmlFor="email"
+                                className="block text-sm font-medium text-gray-700"
+                            >
+                                Email
+                            </label>
                             <input
                                 type="email"
                                 id="email"
@@ -100,7 +128,12 @@ export default function RegisterPage() {
                         </div>
 
                         <div className="mb-4 relative">
-                            <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
+                            <label
+                                htmlFor="password"
+                                className="block text-sm font-medium text-gray-700"
+                            >
+                                Password
+                            </label>
                             <input
                                 type={showPassword ? "text" : "password"}
                                 id="password"
@@ -120,19 +153,28 @@ export default function RegisterPage() {
                         </div>
 
                         <div className="mb-6 relative">
-                            <label htmlFor="repeat-password" className="block text-sm font-medium text-gray-700">Ulangi Password</label>
+                            <label
+                                htmlFor="repeat-password"
+                                className="block text-sm font-medium text-gray-700"
+                            >
+                                Ulangi Password
+                            </label>
                             <input
                                 type={showRepeatPassword ? "text" : "password"}
                                 id="repeat-password"
                                 value={repeatPassword}
-                                onChange={(e) => setRepeatPassword(e.target.value)}
+                                onChange={(e) =>
+                                    setRepeatPassword(e.target.value)
+                                }
                                 placeholder="••••••••"
                                 className="mt-1 block w-full px-4 py-2 pr-10 text-sm text-gray-900 bg-gray-50 border border-gray-300 rounded-lg"
                                 required
                             />
                             <button
                                 type="button"
-                                onClick={() => setShowRepeatPassword(!showRepeatPassword)}
+                                onClick={() =>
+                                    setShowRepeatPassword(!showRepeatPassword)
+                                }
                                 className="absolute right-3 top-9 text-sm text-gray-600"
                             >
                                 {showRepeatPassword ? "🙈" : "👁️"}
@@ -149,7 +191,10 @@ export default function RegisterPage() {
                     </form>
 
                     <p className="mt-10 text-sm text-center">
-                        Sudah Punya Akun? <a href="/login" className="text-blue-600 font-bold">Login Sekarang</a>
+                        Sudah Punya Akun?{" "}
+                        <a href="/login" className="text-blue-600 font-bold">
+                            Login Sekarang
+                        </a>
                     </p>
                 </div>
             </section>

@@ -2,14 +2,22 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Application\Auth\LoginApiUseCase;
+use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
-use App\Models\User\RegisterClient;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
 
 class LoginController extends Controller
 {
+
+    protected $loginUseCase;
+
+
+    public function __construct(LoginApiUseCase $loginUseCase)
+    {
+        $this->loginUseCase = $loginUseCase;
+    }
     /**
      * Login a client
      *
@@ -24,22 +32,24 @@ class LoginController extends Controller
             'password' => 'required|string',
         ]);
 
-        $client = RegisterClient::where('email', $request->email)->first();
+        $client = $this->loginUseCase->execute($request->email);
         $salt = env('PASSWORD_SALT');
 
         // Combine password with salt
         $saltedPassword = $request->password . $salt;
         if (!$client || !Hash::check($saltedPassword, $client->password, [])) {
-            return response()->json(['message' => 'Invalid credentials'], 401);
+            return ApiResponse::error([
+                'message' => 'The provided credentials are incorrect.'
+            ], 'Login failed', 401);
         }
 
         $token = $client->createToken('client_token')->plainTextToken;
 
-        return response()->json([
+        return ApiResponse::success([
             'message' => 'Login successful',
             'token'   => $token,
-            'client'  => $client,
-        ]);
+            'client'  => $client
+        ], 'Login successful', 200);
     }
 
     /**
@@ -53,17 +63,24 @@ class LoginController extends Controller
     public function logout(Request $request)
     {
         if (!$request->user()) {
-            return response()->json(['message' => 'Unauthenticated'], 401);
+            return ApiResponse::error([
+                'message' => 'Unauthenticated'
+
+            ], 'Logout failed', 401);
         }
 
         $token = $request->user()->currentAccessToken();
 
         if (!$token) {
-            return response()->json(['message' => 'No token found'], 400);
+            return ApiResponse::error([
+                'message' => 'Unauthenticated'
+            ], 'Logout failed', 401);
         }
 
         $token->delete();
 
-        return response()->json(['message' => 'Logged out successfully']);
+        return ApiResponse::success([
+            'message' => 'Logout successful'
+        ], 'Logout successful', 200);
     }
 }

@@ -1,13 +1,5 @@
 import { useState, useEffect } from "react";
-import {
-    Menu,
-    X,
-    Share2,
-    Gift,
-    Album,
-    Settings,
-    Gauge,
-} from "lucide-react";
+import { Menu, X, Share2, Gift, Album, Settings, Gauge } from "lucide-react";
 import { useParams, useNavigate } from "react-router-dom";
 import Loading from "../Loading";
 import { orderApi } from "../../action/order";
@@ -68,7 +60,14 @@ export default function DetailInvitation() {
                 }
             } catch (err) {
                 console.error(err);
-                navigate("/404");
+                navigate("/error", {
+                    state: {
+                        error:
+                            err.response?.data?.errors ||
+                            err.response?.data?.message ||
+                            "Terjadi kesalahan.",
+                    },
+                });
             } finally {
                 setLoading(false);
             }
@@ -182,9 +181,11 @@ export default function DetailInvitation() {
                     </div>
                 )}
                 {activeTab === "album" && (
-                    <FormUploadAlbum activeTab={activeTab} />
+                    <FormUploadAlbum activeTab={activeTab} order={order} />
                 )}
-                {activeTab === "gift" && <FormGift order={order} template={template} />}
+                {activeTab === "gift" && (
+                    <FormGift order={order} template={template} />
+                )}
             </main>
             {/* Bottom Navigation */}
             <nav className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-sm bg-white border-t border-gray-200 shadow-lg">
