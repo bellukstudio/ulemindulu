@@ -23,4 +23,9 @@ class RegisterClient extends Model
     {
         return $this->hasMany(Order::class);
     }
+
+    public function scopeSearch($query, $search)
+    {
+        return $query->where('clientName', 'LIKE', '%' . $search . '%');
+    }
 }

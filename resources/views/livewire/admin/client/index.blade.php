@@ -1,6 +1,6 @@
 <div>
     @if (session()->has('message'))
-        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+        <div class="bg-green-100 bclient bclient-green-400 text-green-700 px-4 py-3 rounded mb-4">
             {{ session('message') }}
         </div>
     @endif
@@ -20,8 +20,8 @@
                     </div>
                     <input type="text" id="table-search" wire:model.live.debounce.500ms="search"
                         class="block w-full p-2.5 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50
-                        focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400
-                        dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        focus:ring-blue-500 focus:bclient-blue-500 dark:bg-gray-700 dark:bclient-gray-600 dark:placeholder-gray-400
+                        dark:text-white dark:focus:ring-blue-500 dark:focus:bclient-blue-500"
                         placeholder="Search for template name..." />
                 </div>
 
@@ -41,49 +41,21 @@
             <x-ui.loading />
         </div>
 
-        <x-ui.table :headers="['#', 'Client Name', 'Order Date', 'Invitation Template', 'Url Path', 'Payment Status', 'Action']">
-            @forelse ($orders as $index => $order)
-                <tr class="border-b hover:bg-gray-100 dark:hover:bg-gray-600">
+        <x-ui.table :headers="['#', 'Client Name', 'Action']">
+            @forelse ($clients as $index => $client)
+                <tr class="bclient-b hover:bg-gray-100 dark:hover:bg-gray-600">
                     <td class="py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">
                         {{ $index + 1 }}
                     </td>
                     <td class="py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                        {{ $order->client->clientName ?? '' }}
-                    </td>
-                    <td class="py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                        {{ $order->order_date ?? '' }}
-                    </td>
-                    <td class="py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                        {{ $order->invitationTemplate->template_name ?? '' }}
-                    </td>
-                    <td class="py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                        {{ $order->subdomain ?? '' }}
-                    </td>
-                    <td class="py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                        @if ($order->payment_status == 'pending')
-                            <span
-                                class="inline-flex items-center px-2 py-1 text-xs font-medium text-yellow-800 bg-yellow-100 rounded-full">Pending
-                                🔃
-                            </span>
-                        @elseif ($order->payment_status == 'paid')
-                            <span
-                                class="inline-flex items-center px-2 py-1 text-xs font-medium text-green-800 bg-green-100 rounded-full">Paid
-                                ✅
-                            </span>
-                        @else
-                            <span
-                                class="inline-flex items-center px-2 py-1 text-xs font-medium text-red-800 bg-red-100 rounded-full">Failed
-                                ❌
-                            </span>
-                        @endif
-
+                        {{ $client->clientName ?? '' }}
                     </td>
                     <td class="px-6 py-3">
                         <div class="flex space-x-2">
                             <a href="" class="text-blue-600 hover:text-blue-900 font-medium">
                                 Edit
                             </a>
-                            <button wire:click="delete('{{ $order->id }}')"
+                            <button wire:click="delete('{{ $client->id }}')"
                                 wire:confirm="Are you sure you want to delete this template?"
                                 class="text-red-600 hover:text-red-900 font-medium">
                                 Delete
@@ -93,7 +65,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="6" class="text-center py-8">
+                    <td colspan="3" class="text-center py-8">
                         <div class="flex flex-col items-center">
                             <svg class="w-12 h-12 text-gray-400 mb-4" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
@@ -103,9 +75,9 @@
                             </svg>
                             <p class="text-gray-500 text-lg">
                                 @if ($search)
-                                    No order found for "{{ $search }}"
+                                    No client found for "{{ $search }}"
                                 @else
-                                    No order available
+                                    No client available
                                 @endif
                             </p>
                             @if ($search)
@@ -118,9 +90,9 @@
                 </tr>
             @endforelse
         </x-ui.table>
-        @if ($orders->hasPages())
+        @if ($clients->hasPages())
             <div class="mt-4">
-                {{ $orders->links('pagination::tailwind') }}
+                {{ $clients->links('pagination::tailwind') }}
             </div>
         @endif
     </div>

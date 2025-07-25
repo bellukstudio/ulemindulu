@@ -18,6 +18,7 @@ import ErrorPage from "./pages/ErrorPage";
 import dummyTemplateWedding, { dummyGift } from "./core/data/weddingDummny";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Invoices from "./pages/client/Invoices";
 const App = () => {
     return (
         <>
@@ -65,6 +66,14 @@ const App = () => {
                         element={
                             <PrivateRoute>
                                 <InvitationClient />
+                            </PrivateRoute>
+                        }
+                    />
+                    <Route
+                        path="/app/client/invoices"
+                        element={
+                            <PrivateRoute>
+                                <Invoices />
                             </PrivateRoute>
                         }
                     />

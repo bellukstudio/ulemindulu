@@ -26,6 +26,7 @@ export default function SidebarClient() {
 
     const toggleSidebar = () => {
         setIsSidebarOpen(!isSidebarOpen);
+        console.log(isSidebarOpen);
     };
 
     const closeSidebar = () => {
@@ -262,8 +263,13 @@ export default function SidebarClient() {
                         </li>
                         <li>
                             <a
-                                href="#test"
-                                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group transition-colors"
+                                href="/app/client/invoices"
+                                className={`flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group transition-colors ${
+                                    window.location.pathname ===
+                                    "/app/client/invoices"
+                                        ? "bg-blue-200"
+                                        : "bg-white"
+                                }`}
                                 onClick={() =>
                                     window.innerWidth < 640 && closeSidebar()
                                 }

@@ -58,5 +58,10 @@ Route::prefix('v1')->group(function () {
             Route::put('/reorder', [App\Http\Controllers\Api\V1\AlbumController::class, 'reorderUpsert']);
             Route::get('/myalbum/{orderId}', [App\Http\Controllers\Api\V1\AlbumController::class, 'getMyAlbum']);
         });
+
+
+        Route::prefix('invoices')->group(function () {
+            Route::get('/myinvoice', [App\Http\Controllers\Api\V1\InvoiceController::class, 'getMyInvoice']);
+        });
     });
 });

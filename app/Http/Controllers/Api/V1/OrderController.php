@@ -142,7 +142,8 @@ class OrderController extends Controller
      */
     public function getAllTemplateOrder(Request $request)
     {
-        $search = $request->get('search', '');
+        $search = (string) $request->get('search', '');
+
         $perPage = (int) $request->get('per_page', 10);
         $perPage = $perPage > 100 ? 100 : $perPage;
         $templates = $this->useCaseGetTemplateOrder->execute($search, $perPage);

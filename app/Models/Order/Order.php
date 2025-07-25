@@ -29,9 +29,7 @@ class Order extends Model
 
     protected $hidden = [
         'updated_at',
-        'midtrans_order_id',
         'deleted_at',
-        'payment_status'
     ];
 
     public function client()
@@ -39,10 +37,21 @@ class Order extends Model
         return $this->belongsTo(RegisterClient::class);
     }
 
-
-
     public function invitationTemplate()
     {
-        return $this->belongsTo(InvitationTemplate::class);
+        return $this->belongsTo(InvitationTemplate::class, 'invitation_template_id');
+    }
+
+    public function scopeSearch($query, $search)
+    {
+        return $query->where(function ($q) use ($search) {
+            $q->where('order_date', 'LIKE', '%' . $search . '%')
+                ->orWhereHas('client', function ($clientQuery) use ($search) {
+                    $clientQuery->where('clientName', 'LIKE', '%' . $search . '%');
+                })
+                ->orWhereHas('invitationTemplate', function ($templateQuery) use ($search) {
+                    $templateQuery->where('template_name', 'LIKE', '%' . $search . '%');
+                });
+        });
     }
 }

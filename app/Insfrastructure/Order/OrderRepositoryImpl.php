@@ -10,16 +10,12 @@ class OrderRepositoryImpl implements OrderInterface
 {
     public function all(string $search): mixed
     {
-        $order = Order::query();
+        $order = Order::with(['client', 'invitationTemplate']);
 
         if (!empty(trim($search))) {
-            $order->where(function ($q) use ($search) {
-                $q->where('order_date', 'LIKE', '%' . $search . '%')
-                    ->orWhereHas('client', function ($clientQuery) use ($search) {
-                        $clientQuery->where('clientName', 'LIKE', '%' . $search . '%');
-                    });
-            });
+            $order->search($search);
         }
+
         return $order->orderBy('created_at', 'desc')->paginate(10);
     }
 
@@ -48,8 +44,8 @@ class OrderRepositoryImpl implements OrderInterface
             ->where('client_id', $client->id);
 
         if (!empty(trim($search))) {
-            $order->whereHas('template', function ($query) use ($search) {
-                $query->where('template_name', 'LIKE', '%' . $search . '%');
+            $order->whereHas('invitationTemplate', function ($query) use ($search) {
+                $query->where('template_name', 'ILIKE', '%' . $search . '%');
             });
         }
 

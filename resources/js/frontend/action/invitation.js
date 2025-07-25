@@ -19,10 +19,10 @@ export const invitationAPI = {
      * @param {number} [perPage=20] - Number of templates per page.
      * @returns {Promise<import("../core/api").ApiResponse>}
      */
-    fetchMyTemplate: async (page = 1, perPage = 20) => {
+    fetchMyTemplate: async (page = 1, perPage = 20, search = '') => {
         try {
             const response = await axios.get(
-                `${baseURL}/v1/me/templates/invitation?page=${page}&perPage=${perPage}`,
+                `${baseURL}/v1/me/templates/invitation?page=${page}&perPage=${perPage}&search=${search}`,
                 getAuthHeaders()
             );
             return {

@@ -8,15 +8,15 @@ use Illuminate\Support\Facades\Log;
 
 class TemplateRepositoryImpl implements TemplateInterface
 {
+
     public function all(string $search): mixed
     {
         $templates = InvitationTemplate::query();
 
         if (!empty(trim($search))) {
-            $templates->where(function ($q) use ($search) {
-                $q->where('template_name', 'LIKE', '%' . $search . '%');
-            });
+            $templates->search($search);
         }
+
         return $templates->orderBy('created_at', 'desc')->paginate(10);
     }
 

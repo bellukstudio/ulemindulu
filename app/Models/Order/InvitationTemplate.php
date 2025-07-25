@@ -23,16 +23,23 @@ class InvitationTemplate extends Model
         'is_active',
         'price',
         'isDiscount',
-        'priceDiscount'
+        'priceDiscount',
+        'order_count'
     ];
+
     protected $dates = ['deleted_at'];
 
+    protected $casts = [
+        'is_active' => 'boolean',
+        'isDiscount' => 'boolean',
+        'price' => 'decimal:2',
+        'priceDiscount' => 'decimal:2',
+    ];
 
     public function orders()
     {
-        return $this->hasMany(Order::class);
+        return $this->hasMany(Order::class, 'invitation_template_id');
     }
-
 
     public function scopeActive($query)
     {

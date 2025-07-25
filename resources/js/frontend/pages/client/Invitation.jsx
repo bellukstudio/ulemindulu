@@ -1,5 +1,5 @@
 import InvitationCard from "./components/InvitationCard";
-import  { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import SidebarClient from "./components/SidebarClient";
 import { invitationAPI } from "../../action/invitation";
 
@@ -20,11 +20,12 @@ export default function InvitationClient() {
         per_page: 20,
     });
 
-    const fetchTemplates = async (page = 1) => {
+    const fetchTemplates = async (page = 1, search = "") => {
         try {
             const result = await invitationAPI.fetchMyTemplate(
                 page,
-                pagination.per_page
+                pagination.per_page,
+                search
             );
 
             if (result.success) {
@@ -35,14 +36,14 @@ export default function InvitationClient() {
             }
         } catch (err) {
             console.error("Gagal fetch data:", err);
-              navigate("/error", {
-                    state: {
-                        error:
-                            err.response?.data?.errors ||
-                            err.response?.data?.message ||
-                            "Terjadi kesalahan.",
-                    },
-                });
+            navigate("/error", {
+                state: {
+                    error:
+                        err.response?.data?.errors ||
+                        err.response?.data?.message ||
+                        "Terjadi kesalahan.",
+                },
+            });
         }
     };
 
@@ -69,7 +70,7 @@ export default function InvitationClient() {
     return (
         <>
             <SidebarClient />
-            <div className="p-4 sm:ml-64">
+            <div className="p-4 sm:ml-64 mt-10">
                 <div className="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-14">
                     <div
                         className="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400"
@@ -83,26 +84,28 @@ export default function InvitationClient() {
 
                     <InvitationCard invitations={templates} />
                 </div>
-            </div>
-            {/* Pagination */}
-            <div className="flex justify-center mt-10 gap-4">
-                <button
-                    onClick={prevPage}
-                    disabled={pagination.current_page === 1}
-                    className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 disabled:opacity-50"
-                >
-                    Previous
-                </button>
-                <span className="text-gray-600 font-semibold mt-1">
-                    Page {pagination.current_page} of {pagination.last_page}
-                </span>
-                <button
-                    onClick={nextPage}
-                    disabled={pagination.current_page === pagination.last_page}
-                    className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 disabled:opacity-50"
-                >
-                    Next
-                </button>
+                {/* Pagination */}
+                <div className="flex justify-center mt-10 gap-4">
+                    <button
+                        onClick={prevPage}
+                        disabled={pagination.current_page === 1}
+                        className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 disabled:opacity-50"
+                    >
+                        Previous
+                    </button>
+                    <span className="text-gray-600 font-semibold mt-1">
+                        Page {pagination.current_page} of {pagination.last_page}
+                    </span>
+                    <button
+                        onClick={nextPage}
+                        disabled={
+                            pagination.current_page === pagination.last_page
+                        }
+                        className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 disabled:opacity-50"
+                    >
+                        Next
+                    </button>
+                </div>
             </div>
         </>
     );
