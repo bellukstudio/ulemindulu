@@ -35,6 +35,11 @@ class TemplateRepositoryImpl implements TemplateInterface
         return $template->delete();
     }
 
+    public function findById($id): InvitationTemplate
+    {
+        return InvitationTemplate::find($id);
+    }
+
     //API
     public function allApi(string $search, int $perPage): mixed
     {

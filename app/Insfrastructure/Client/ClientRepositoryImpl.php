@@ -17,4 +17,9 @@ class ClientRepositoryImpl implements ClientInterface
 
         return $client->orderBy('created_at', 'desc')->paginate(10);
     }
+
+    public function findById($id): RegisterClient
+    {
+        return RegisterClient::find($id);
+    }
 }

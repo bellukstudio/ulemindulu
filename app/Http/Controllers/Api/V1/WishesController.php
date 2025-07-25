@@ -2,11 +2,9 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Application\Wishes\CreateWishApiUseCase;
-use App\Application\Wishes\GetWishApiUseCase;
+use App\Deps\WishesDependencies;
 use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
-use App\Models\Order\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -15,16 +13,14 @@ class WishesController extends Controller
 
     protected $usecaseCreateWishes;
     protected $usecaseGetWishes;
+    protected $usecaseOrder;
 
-
-    /**
-     * @param CreateWishApiUseCase $usecaseCreateWishes
-     * @param GetWishApiUseCase $usecaseGetWishes
-     */
-    public function __construct(CreateWishApiUseCase $usecaseCreateWishes, GetWishApiUseCase $usecaseGetWishes)
-    {
-        $this->usecaseCreateWishes = $usecaseCreateWishes;
-        $this->usecaseGetWishes = $usecaseGetWishes;
+    public function __construct(
+        WishesDependencies $deps
+    ) {
+        $this->usecaseCreateWishes = $deps->usecaseCreateWishes;
+        $this->usecaseGetWishes = $deps->usecaseGetWishes;
+        $this->usecaseOrder = $deps->usecaseOrder;
     }
 
 
@@ -37,7 +33,7 @@ class WishesController extends Controller
      */
     public function getAllWishes($slug)
     {
-        $order = Order::where('subdomain', $slug)->first();
+        $order = $this->usecaseOrder->orderBySubDomain($slug);
         if (!$order) {
             return ApiResponse::error([
                 'message' => 'Order not found',
@@ -67,7 +63,7 @@ class WishesController extends Controller
             'saying' => 'required|max:100',
         ]);
 
-        $order = Order::where('subdomain', $slug)->first();
+        $order = $this->usecaseOrder->orderBySubDomain($slug);
         if (!$order) {
             return ApiResponse::error([
                 'message' => 'Order not found',

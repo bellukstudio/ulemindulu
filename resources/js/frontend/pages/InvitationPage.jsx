@@ -1,14 +1,19 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import Loading from "./Loading";
 import { invitationAPI } from "../action/invitation";
-import HomeBasicWedding from "../templates/basic-wedding/HomeBasicWedding";
-
+import NotFound from "./NotFound";
+import { loadTemplateComponent } from "../core/templateLoader";
+import { getCachedTemplate } from "../core/templateCache";
+/**
+ * Normalize invitation settings by parsing custom_data string to JSON.
+ *
+ * @param {object} settings Invitation settings
+ * @returns {object} Normalized invitation settings
+ */
 function normalizeInvitationSettings(settings) {
     if (!settings) return null;
-
     let parsedCustomData = settings.custom_data;
-
     if (typeof parsedCustomData === "string") {
         try {
             parsedCustomData = JSON.parse(parsedCustomData);
@@ -17,33 +22,22 @@ function normalizeInvitationSettings(settings) {
             parsedCustomData = {};
         }
     }
-
     return {
         ...settings,
         custom_data: parsedCustomData,
     };
 }
-/**
- * InvitationPage is a React component that renders an invitation page based on
- * the template type. It fetches the invitation details using the slug from URL
- * parameters and displays the appropriate template.
- *
- * The component shows a loading indicator while fetching data and handles errors
- * during the fetch operation. If the template type is not recognized, it displays
- * a fallback message.
- *
- * @returns {React.ReactElement} The rendered invitation page component.
- */
 
 /**
- * Renders an invitation page based on the template type. It fetches the invitation
- * details using the slug from URL parameters and displays the appropriate template.
+ * InvitationPage component.
  *
- * The component shows a loading indicator while fetching data and handles errors
- * during the fetch operation. If the template type is not recognized, it displays
- * a fallback message.
+ * This component fetches and displays an invitation page based on the subdomain slug.
+ * It retrieves the template, invitation settings, gifts, and album data associated with the invitation.
+ * If the template is not found, it navigates to a 404 page. If there is an error during fetching,
+ * it navigates to an error page. The component uses suspense to handle loading states while
+ * dynamically importing and rendering the template component.
  *
- * @returns {React.ReactElement} The rendered invitation page component.
+ * @returns {JSX.Element} The rendered invitation page component.
  */
 
 function InvitationPage() {
@@ -69,13 +63,15 @@ function InvitationPage() {
                         Array.isArray(result.data.gift) ? result.data.gift : []
                     );
                     setAlbum(
-                        Array.isArray(result.data.album) ? result.data.album : []
+                        Array.isArray(result.data.album)
+                            ? result.data.album
+                            : []
                     );
                 } else {
                     navigate("/404");
                 }
-            } catch (error) {
-                console.error("Error fetching subdomain:", error);
+            } catch (err) {
+                console.error("Error fetching subdomain:", err);
                 navigate("/error", {
                     state: {
                         error:
@@ -89,23 +85,23 @@ function InvitationPage() {
 
         fetchSubdomain();
     }, [slug]);
+
     if (!template) return <Loading />;
+    const templateData = template.slug;
 
-    const templateData= template.slug;
+    const TemplateComponent = getCachedTemplate(templateData);
+    if (!TemplateComponent) return <NotFound />;
 
-    switch (templateData) {
-        case "basic-wedding":
-            return (
-                <HomeBasicWedding
-                    data={invitationSettings}
-                    gift={gift}
-                    isPreview={false}
-                    album={album}
-                />
-            );
-        default:
-            return <p>Template not found</p>;
-    }
+    return (
+        <Suspense fallback={<Loading />}>
+            <TemplateComponent
+                data={invitationSettings}
+                gift={gift}
+                isPreview={false}
+                album={album}
+            />
+        </Suspense>
+    );
 }
 
 export default InvitationPage;

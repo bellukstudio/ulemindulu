@@ -2,14 +2,9 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Application\Gift\CheckBankAccountApiUseCase;
-use App\Application\Gift\CreateBankAccountApiUseCase;
-use App\Application\Gift\DeleteBankAccountApiUseCase;
-use App\Application\Gift\GetAllBankAccountApiUseCase;
-use App\Application\Gift\UpdateBankAccountApiUseCase;
+use App\Deps\GiftDependencies;
 use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
-use App\Models\Invitation\BankAccount;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -20,29 +15,22 @@ class GiftController extends Controller
 {
     private const MAX_BANK_ACCOUNTS = 5;
 
-    private GetAllBankAccountApiUseCase $useCaseGetBankAccount;
-    private CreateBankAccountApiUseCase $useCaseCreateBankAccount;
-    ///
-    // private UpdateBankAccountApiUseCase $useCaseUpdateBankAccount;
-    private DeleteBankAccountApiUseCase $useCaseDeleteBankAccount;
-    private CheckBankAccountApiUseCase $useCaseCheckBankAccount;
+    private $useCaseGetBankAccount;
+    private $useCaseCreateBankAccount;
+    private $useCaseDeleteBankAccount;
+    private  $useCaseCheckBankAccount;
+    private  $usecaseGift;
 
     /**
      * GiftController constructor.
      */
-    public function __construct(
-        GetAllBankAccountApiUseCase $useCaseGetBankAccount,
-        CreateBankAccountApiUseCase $useCaseCreateBankAccount,
-        // UpdateBankAccountApiUseCase $useCaseUpdateBankAccount,
-        DeleteBankAccountApiUseCase $useCaseDeleteBankAccount,
-        CheckBankAccountApiUseCase $useCaseCheckBankAccount
-    ) {
-        $this->useCaseGetBankAccount = $useCaseGetBankAccount;
-        $this->useCaseCreateBankAccount = $useCaseCreateBankAccount;
-        ///
-        // $this->useCaseUpdateBankAccount = $useCaseUpdateBankAccount;
-        $this->useCaseDeleteBankAccount = $useCaseDeleteBankAccount;
-        $this->useCaseCheckBankAccount = $useCaseCheckBankAccount;
+    public function __construct(GiftDependencies $deps)
+    {
+        $this->useCaseGetBankAccount = $deps->useCaseGetBankAccount;
+        $this->useCaseCreateBankAccount = $deps->useCaseCreateBankAccount;
+        $this->useCaseDeleteBankAccount = $deps->useCaseDeleteBankAccount;
+        $this->useCaseCheckBankAccount = $deps->useCaseCheckBankAccount;
+        $this->usecaseGift = $deps->usecaseGift;
     }
 
     /**
@@ -116,8 +104,7 @@ class GiftController extends Controller
 
             return ApiResponse::success([
                 'message' => 'Bank accounts created successfully',
-            ],'Bank accounts created successfully', 201);
-
+            ], 'Bank accounts created successfully', 201);
         } catch (\InvalidArgumentException $e) {
             return ApiResponse::error($e->getMessage(), 422);
         } catch (\Throwable $e) {
@@ -128,7 +115,7 @@ class GiftController extends Controller
 
             return ApiResponse::error([
                 'message' => 'Failed to create bank accounts',
-            ],'Failed to create bank accounts', 500);
+            ], 'Failed to create bank accounts', 500);
         }
     }
 
@@ -194,14 +181,13 @@ class GiftController extends Controller
                 return ApiResponse::success([
                     'message' => 'Bank accounts found',
                     'bank' => $bankAccounts,
-                    
+
                 ]);
             }
 
             return ApiResponse::error([
                 'message' => 'Bank accounts not found',
-            ],'Bank accounts not found', 404);
-
+            ], 'Bank accounts not found', 404);
         } catch (\Throwable $e) {
             Log::error('Failed to check bank accounts', [
                 'error' => $e->getMessage(),
@@ -273,9 +259,7 @@ class GiftController extends Controller
 
             DB::transaction(function () use ($validatedData) {
                 // Delete existing bank accounts
-                BankAccount::where('order_id', $validatedData['order_id'])
-                    ->where('invitation_template_id', $validatedData['invitation_template_id'])
-                    ->delete();
+                $this->usecaseGift->deleteBankAccount($validatedData['order_id'], $validatedData['invitation_template_id']);
 
                 // Create new bank accounts
                 $this->useCaseCreateBankAccount->execute(
@@ -288,11 +272,10 @@ class GiftController extends Controller
             return ApiResponse::success([
                 'message' => 'Bank accounts updated successfully'
             ], 'Bank accounts updated successfully', 200);
-
         } catch (\InvalidArgumentException $e) {
             return ApiResponse::error([
                 'message' => $e->getMessage()
-            ],'Validation error', 422);
+            ], 'Validation error', 422);
         } catch (\Throwable $e) {
             Log::error('Failed to update bank accounts', [
                 'error' => $e->getMessage(),
@@ -300,7 +283,7 @@ class GiftController extends Controller
             ]);
 
             return ApiResponse::error([
-                'message' => 'Failed to update bank accounts '. $e->getMessage(),
+                'message' => 'Failed to update bank accounts ' . $e->getMessage(),
             ], 'Failed to update bank accounts', 500);
         }
     }
@@ -347,7 +330,6 @@ class GiftController extends Controller
             return ApiResponse::success([
                 'message' => 'Bank account deleted successfully'
             ], 'Bank account deleted successfully', 200);
-
         } catch (\Throwable $e) {
             Log::error('Failed to delete bank account', [
                 'error' => $e->getMessage(),
@@ -386,13 +368,10 @@ class GiftController extends Controller
      */
     private function checkBankAccountLimit(string $orderId, string $invitationTemplateId, string $newAccountsCount): void
     {
-        $existingCount = BankAccount::where('order_id', $orderId)
-            ->where('invitation_template_id', $invitationTemplateId)
-            ->count();
+        $existingCount = $this->usecaseGift->countBankAccount($orderId, $invitationTemplateId);
 
         if ($existingCount + $newAccountsCount > self::MAX_BANK_ACCOUNTS) {
             throw new \InvalidArgumentException('Bank account limit exceeded');
         }
     }
-
 }

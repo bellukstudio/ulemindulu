@@ -51,4 +51,15 @@ class GiftRepositoryImpl implements GiftInterface
     {
         return BankAccount::where('order_id', $orderId)->where('invitation_template_id', $invitationTemplateId)->count();
     }
+
+    public function deleteBankAccount($orderId, $invitationTemplateId) : BankAccount
+    {
+        return BankAccount::where('order_id', $orderId)->where('invitation_template_id', $invitationTemplateId)->delete();
+    }
+
+
+    public function countBankAccount($orderId, $invitationTemplateId) : int
+    {
+        return BankAccount::where('order_id', $orderId)->where('invitation_template_id', $invitationTemplateId)->count();
+    }
 }

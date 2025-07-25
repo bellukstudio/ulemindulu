@@ -5,14 +5,12 @@ namespace App\Http\Controllers\Api\V1;
 use App\Application\Gift\GetAllBankAccountApiUseCase;
 use App\Application\Invitation\CheckInvitationApiUseCase;
 use App\Application\Invitation\CreateInvitationApiUseCase;
+use App\Application\Invitation\InvitationUseCase;
 use App\Application\Invitation\UpdateInvitationApiUseCase;
+use App\Deps\InvitationDependencies;
 use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
-use App\Insfrastructure\Invitation\InvitationRepositoryImpl;
-use App\Models\Invitation\AlbumPhoto;
-use App\Models\Invitation\InvitationSetting;
 use App\Models\Order\InvitationTemplate;
-use App\Models\Order\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -22,29 +20,20 @@ class InvitationController extends Controller
     protected $useCaseUpdateInvitation;
     protected $useCaseCheckInvitation;
     protected $useCaseGetBankAccount;
+    protected $useCaseInvitation;
+    protected $useCaseOrder;
+    protected $useCaseAlbum;
 
-
-    /**
-     * Create a new controller instance.
-     *
-     * @param CreateInvitationApiUseCase $createInvitationApiUseCase
-     * @param UpdateInvitationApiUseCase $updateInvitationApiUseCase
-     * @param CheckInvitationApiUseCase $checkInvitationApiUseCase
-     * @param GetAllBankAccountApiUseCase $useCaseGetBankAccount
-     * @return void
-     */
-    public function __construct(
-        CreateInvitationApiUseCase $createInvitationApiUseCase,
-        UpdateInvitationApiUseCase $updateInvitationApiUseCase,
-        CheckInvitationApiUseCase $checkInvitationApiUseCase,
-        GetAllBankAccountApiUseCase $useCaseGetBankAccount,
-    ) {
-        $this->useCaseCreateInvitation = $createInvitationApiUseCase;
-        $this->useCaseUpdateInvitation = $updateInvitationApiUseCase;
-        $this->useCaseCheckInvitation = $checkInvitationApiUseCase;
-        $this->useCaseGetBankAccount = $useCaseGetBankAccount;
+    public function __construct(InvitationDependencies $deps)
+    {
+        $this->useCaseCreateInvitation = $deps->createInvitation;
+        $this->useCaseUpdateInvitation = $deps->updateInvitation;
+        $this->useCaseCheckInvitation = $deps->checkInvitation;
+        $this->useCaseGetBankAccount = $deps->getBankAccount;
+        $this->useCaseInvitation = $deps->invitation;
+        $this->useCaseOrder = $deps->order;
+        $this->useCaseAlbum = $deps->album;
     }
-
 
 
     /**
@@ -203,7 +192,7 @@ class InvitationController extends Controller
             $data['custom_data'] = json_encode($data['custom_data']);
         }
 
-        $invitation = InvitationSetting::find($id);
+        $invitation = $this->useCaseInvitation->findById($id);
         if (!$invitation) {
             return ApiResponse::error([
                 'message' => 'Invitation not found'
@@ -258,7 +247,7 @@ class InvitationController extends Controller
 
     public function getBySlug($slug)
     {
-        $order = Order::where('subdomain', $slug)->firstOrFail();
+        $order = $this->useCaseOrder->orderBySubDomain($slug);
 
         $template = InvitationTemplate::find($order->invitation_template_id);
         if (!$template) {
@@ -267,17 +256,14 @@ class InvitationController extends Controller
             ], 'Template not found', 404);
         }
 
-        $invitationSettings = InvitationSetting::where('order_id', $order->id)
-            ->where('invitation_template_id', $order->invitation_template_id)
-            ->first();
-
+        $invitationSettings = $this->useCaseInvitation->getInvitationByOrderIdAndInvitationTemplateId($order->id, $template->id);
         if (!$invitationSettings) {
             return ApiResponse::error([
                 'message' => 'Invitation settings not found'
             ], 'Invitation settings not found', 404);
         }
 
-        $album = AlbumPhoto::where('order_id', $order->id)->get();
+        $album = $this->useCaseAlbum->getAlbumByOrderId($order->id);
 
         $bankAccounts = $this->useCaseGetBankAccount->execute($order->id, $template->id);
 

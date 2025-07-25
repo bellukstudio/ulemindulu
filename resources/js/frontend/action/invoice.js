@@ -55,4 +55,34 @@ export const invoiceAPI = {
             };
         }
     },
+
+    /**
+     * Downloads an invoice by its ID.
+     *
+     * @param {number} id - The ID of the invoice to download.
+     * @returns {Promise<Object>} - A promise that resolves to an object containing
+     *   the success status and a download link for the invoice. If an error occurs,
+     *   the success status will be false and an error message will be provided.
+     */
+    downloadInvoice: async (id) => {
+        try {
+            const response = await axios.get(
+                `${baseURL}/v1/invoices/download/${id}`,
+                getAuthHeaders()
+            );
+            return {
+                success: true,
+                data: response.data.data.invoice,
+            };
+        } catch (error) {
+            console.error("Error fetching templates:", error);
+            return {
+                success: false,
+                error:
+                    error.response?.data?.meta.message ||
+                    "Failed to fetch templates",
+                data: [],
+            };
+        }
+    },
 };

@@ -21,4 +21,16 @@ class InvitationRepositoryImpl implements InvitationInterface
     {
         return InvitationSetting::where('order_id', $orderId)->first();
     }
+
+    public function findById($invitationId) : InvitationSetting
+    {
+        return InvitationSetting::find($invitationId);
+    }
+
+    public function getInvitationByOrderIdAndInvitationTemplateId($orderId, $invitationTemplateId)
+    {
+        return InvitationSetting::where('order_id', $orderId)
+            ->where('invitation_template_id', $invitationTemplateId)
+            ->first();
+    }
 }

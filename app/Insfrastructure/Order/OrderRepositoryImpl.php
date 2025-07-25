@@ -29,6 +29,20 @@ class OrderRepositoryImpl implements OrderInterface
         return $order->delete();
     }
 
+    public function showById($id)
+    {
+        return Order::with(['invitationTemplate'])->findOrFail($id);
+    }
+
+    public function orderBySubDomain(string $subdomain): Order
+    {
+        return Order::where('subdomain', $subdomain)->firstOrFail();
+    }
+
+    public function findById($id): Order
+    {
+        return Order::find($id);
+    }
 
     // API
     public function create(array $data): Order
@@ -59,8 +73,4 @@ class OrderRepositoryImpl implements OrderInterface
             ]);
     }
 
-    public function showById($id)
-    {
-        return Order::with(['invitationTemplate'])->findOrFail($id);
-    }
 }

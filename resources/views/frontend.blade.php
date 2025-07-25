@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Ulemindulu</title>
@@ -10,7 +11,13 @@
     @viteReactRefresh
     @vite(['resources/css/app.css', 'resources/js/frontend/app.jsx'])
 </head>
+
 <body>
     <div id="root"></div>
+    @if (env('APP_ENV') == 'local' || env('APP_ENV') == 'development')
+        <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('app.midtrans.clientKey') }}">
+        </script>
+    @endif
 </body>
+
 </html>

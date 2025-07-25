@@ -62,6 +62,7 @@ Route::prefix('v1')->group(function () {
 
         Route::prefix('invoices')->group(function () {
             Route::get('/myinvoice', [App\Http\Controllers\Api\V1\InvoiceController::class, 'getMyInvoice']);
+            Route::get('/download/{orderId}', [App\Http\Controllers\Api\V1\InvoiceController::class, 'downloadInvoice']);
         });
     });
 });

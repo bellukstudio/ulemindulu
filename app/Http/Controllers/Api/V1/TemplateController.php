@@ -2,8 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Application\Template\GetAllTemplateApiUseCase;
-use App\Application\Template\ShowTemplateApiUseCase;
+use App\Deps\TemplateDependencies;
 use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -13,25 +12,12 @@ class TemplateController extends Controller
     protected $useCaseGetAllTemplate;
     protected $useCaseShowTemplate;
 
-    /**
-     * TemplateController constructor.
-     *
-     * @param GetAllTemplateApiUseCase $useCaseTemplate
-     * @param ShowTemplateApiUseCase $useCaseShowTemplate
-     */
-
-    public function __construct(GetAllTemplateApiUseCase $useCaseTemplate, ShowTemplateApiUseCase $useCaseShowTemplate)
-    {
-        $this->useCaseGetAllTemplate = $useCaseTemplate;
-        $this->useCaseShowTemplate = $useCaseShowTemplate;
+    public function __construct(
+        TemplateDependencies $deps
+    ) {
+        $this->useCaseGetAllTemplate = $deps->useCaseGetAllTemplate;
+        $this->useCaseShowTemplate = $deps->useCaseShowTemplate;
     }
-
-    /**
-     * Display a listing of the resource.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
 
     /**
      * Get all templates.

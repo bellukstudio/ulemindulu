@@ -19,6 +19,7 @@ import dummyTemplateWedding, { dummyGift } from "./core/data/weddingDummny";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Invoices from "./pages/client/Invoices";
+import InvoiceDownloader from "./pages/client/components/DownloadInvoice";
 const App = () => {
     return (
         <>
@@ -82,6 +83,14 @@ const App = () => {
                         element={
                             <PrivateRoute>
                                 <DetailInvitation />
+                            </PrivateRoute>
+                        }
+                    />
+                    <Route
+                        path="/app/client/invoices/download/:id"
+                        element={
+                            <PrivateRoute>
+                                <InvoiceDownloader />
                             </PrivateRoute>
                         }
                     />

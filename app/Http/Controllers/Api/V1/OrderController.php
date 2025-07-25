@@ -2,13 +2,10 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Application\Order\CreateOrderApiUseCase;
-use App\Application\Order\GetAllTemplateOrderApiUseCase;
-use App\Application\Order\ShowTemplateOrderApiUseCase;
+
+use App\Deps\OrderDependencies;
 use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
-use App\Models\Order\InvitationTemplate;
-use App\Models\User\RegisterClient;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -17,52 +14,26 @@ class OrderController extends Controller
     protected $useCaseCreateOrder;
     protected $useCaseGetTemplateOrder;
     protected $useCaseShowTemplateOrder;
+    protected $useCaseClient;
+    protected $useCaseTemplate;
 
-
-    /**
-     * @param CreateOrderApiUseCase $createOrderApiUseCase
-     * @param GetAllTemplateOrderApiUseCase $getAllTemplateOrderApiUseCase
-     * @param ShowTemplateOrderApiUseCase $showTemplateOrderApiUseCase
-     */
-    public function __construct(CreateOrderApiUseCase $createOrderApiUseCase, GetAllTemplateOrderApiUseCase $getAllTemplateOrderApiUseCase, ShowTemplateOrderApiUseCase $showTemplateOrderApiUseCase)
-    {
-        $this->useCaseCreateOrder = $createOrderApiUseCase;
-        $this->useCaseGetTemplateOrder = $getAllTemplateOrderApiUseCase;
-        $this->useCaseShowTemplateOrder = $showTemplateOrderApiUseCase;
+    public function __construct(
+        OrderDependencies $deps
+    ) {
+        $this->useCaseCreateOrder = $deps->createOrderApiUseCase;
+        $this->useCaseGetTemplateOrder = $deps->getAllTemplateOrderApiUseCase;
+        $this->useCaseShowTemplateOrder = $deps->showTemplateOrderApiUseCase;
+        $this->useCaseClient = $deps->useCaseclient;
+        $this->useCaseTemplate = $deps->useCasetemplate;
     }
 
+
     /**
-     * Create a new order.
+     * Create a new order
      *
-     * @bodyParam client_id int required The ID of the client.
-     * @bodyParam invitation_template_id int required The ID of the invitation template.
-     * @bodyParam order_date date required The date of the order.
-     * @bodyParam subdomain string required The subdomain of the order.
+     * @param \Illuminate\Http\Request $request
      *
-     * @response 201 {
-     *   "message": "Order created successfully",
-     * }
-     *
-     * @response 401 {
-     *   "message": "Unauthenticated"
-     * }
-     *
-     * @response 422 {
-     *   "errors": {
-     *     "client_id": [
-     *       "The client id field is required."
-     *     ],
-     *     "invitation_template_id": [
-     *       "The invitation template id field is required."
-     *     ],
-     *     "order_date": [
-     *       "The order date field is required."
-     *     ],
-     *     "subdomain": [
-     *       "The subdomain field is required."
-     *     ]
-     *   }
-     * }
+     * @return \Illuminate\Http\Response
      */
     public function createOrder(Request $request)
     {
@@ -81,11 +52,11 @@ class OrderController extends Controller
             $response = ApiResponse::error([
                 'message' => 'Unauthenticated',
             ], 'Unauthenticated', 401);
-        } elseif (!RegisterClient::find($request->client_id)) {
+        } elseif (!$this->useCaseClient->findById($request->client_id)) {
             $response = ApiResponse::error([
                 'message' => 'Client not found',
             ], 'Client not found', 404);
-        } elseif (!InvitationTemplate::find($request->invitation_template_id)) {
+        } elseif (!$this->useCaseTemplate->findById($request->invitation_template_id)) {
             $response = ApiResponse::error([
                 'message' => 'Invitation template not found',
             ], 'Invitation template not found', 404);
@@ -95,6 +66,7 @@ class OrderController extends Controller
                 'invitation_template_id' => $request->invitation_template_id,
                 'order_date' => $request->order_date,
                 'subdomain' => $request->subdomain,
+                'payment_status' => 'pending',
             ]);
 
             $response = ApiResponse::success([

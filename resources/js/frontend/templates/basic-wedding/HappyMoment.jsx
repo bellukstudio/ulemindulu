@@ -5,16 +5,18 @@ HappyMoment.propTypes = {
     data: PropTypes.object,
 };
 export default function HappyMoment({ data }) {
-   const customData = data.custom_data
+    const customData = data.custom_data;
+    const targetDate = data.event_date ? new Date(data.event_date) : new Date();
 
-    const targetDate = data.event_date
-        ? new Date(data.event_date)
-        : new Date();
     const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
 
     function calculateTimeLeft() {
         const now = new Date();
         const difference = targetDate.getTime() - now.getTime();
+
+        if (difference <= 0) {
+            return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+        }
 
         const days = Math.floor(difference / (1000 * 60 * 60 * 24));
         const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
@@ -26,7 +28,18 @@ export default function HappyMoment({ data }) {
 
     useEffect(() => {
         const timer = setInterval(() => {
-            setTimeLeft(calculateTimeLeft());
+            const newTimeLeft = calculateTimeLeft();
+            setTimeLeft(newTimeLeft);
+
+            // Jika semua waktu habis, hentikan interval
+            if (
+                newTimeLeft.days <= 0 &&
+                newTimeLeft.hours <= 0 &&
+                newTimeLeft.minutes <= 0 &&
+                newTimeLeft.seconds <= 0
+            ) {
+                clearInterval(timer);
+            }
         }, 1000);
 
         return () => clearInterval(timer);

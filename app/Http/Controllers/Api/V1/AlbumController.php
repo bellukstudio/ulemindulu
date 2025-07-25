@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Deps\AlbumDependencies;
 use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
-use App\Models\Invitation\AlbumPhoto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -13,7 +13,12 @@ use Illuminate\Support\Facades\Log;
 
 class AlbumController extends Controller
 {
+    protected $useCaseMyAlbum;
 
+    public function __construct(AlbumDependencies $deps)
+    {
+        $this->useCaseMyAlbum = $deps->album;
+    }
     /**
      * Handles the upload of album photos for a specific order.
      *
@@ -46,7 +51,7 @@ class AlbumController extends Controller
         $sortedIds = $request->sorted_ids ?? [];
         $uploaded = [];
 
-        $currentPhotoCount = AlbumPhoto::where('order_id', $orderId)->count();
+        $currentPhotoCount = $this->useCaseMyAlbum->countByOrderId($orderId);
         $incomingCount = count($request->file('photos'));
         $total = $currentPhotoCount + $incomingCount;
 
@@ -72,13 +77,15 @@ class AlbumController extends Controller
                     'resource_type' => 'image',
                 ]);
 
-                $photoRecord = AlbumPhoto::create([
-                    'order_id' => $orderId,
-                    'invitation_template_id' => $invitationTemplateId,
-                    'album_public_id' => $uploadResult['public_id'],
-                    'image_path' => $uploadResult['secure_url'],
-                    'position' => $finalPosition,
-                ]);
+                $photoRecord = $this->useCaseMyAlbum->createAlbum(
+                    [
+                        'order_id' => $orderId,
+                        'invitation_template_id' => $invitationTemplateId,
+                        'album_public_id' => $uploadResult['public_id'],
+                        'image_path' => $uploadResult['secure_url'],
+                        'position' => $finalPosition,
+                    ]
+                );
 
                 $uploaded[] = $photoRecord;
             }
@@ -107,7 +114,7 @@ class AlbumController extends Controller
      */
     public function destroy($id)
     {
-        $photo = AlbumPhoto::findOrFail($id);
+        $photo = $this->useCaseMyAlbum->findById($id);
 
         try {
             Cloudinary::uploadApi()->destroy($photo->album_public_id);
@@ -150,10 +157,7 @@ class AlbumController extends Controller
         $orderId = $request->order_id;
         $orderedIds = $request->ordered_ids;
 
-        $existingPhotos = AlbumPhoto::where('order_id', $orderId)
-            ->whereIn('id', $orderedIds)
-            ->get()
-            ->keyBy('id');
+        $existingPhotos = $this->useCaseMyAlbum->getKeyByOrderId($orderId, $orderedIds);
 
         if ($existingPhotos->count() !== count($orderedIds)) {
             return ApiResponse::error([
@@ -180,7 +184,7 @@ class AlbumController extends Controller
                 }
             }
 
-            AlbumPhoto::upsert(
+            $this->useCaseMyAlbum->upsertAlbum(
                 $updateData,
                 ['id'],
                 ['position']
@@ -219,10 +223,7 @@ class AlbumController extends Controller
             ], 'Invalid order ID', 400);
         }
 
-        $myalbum = AlbumPhoto::where('order_id', $orderId)
-            ->select(['id', 'album_public_id', 'image_path', 'position', 'created_at'])
-            ->orderBy('position')
-            ->get();
+        $myalbum = $this->useCaseMyAlbum->getMyAlbum($orderId);
         ///
         // if ($myalbum->isEmpty()) {
         //     return ApiResponse::error([
@@ -238,5 +239,4 @@ class AlbumController extends Controller
             'Album retrieved successfully',
         );
     }
-
 }

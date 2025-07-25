@@ -6,7 +6,7 @@ use App\Domain\Invoice\InvoiceInterface;
 use App\Models\Order\Order;
 use Illuminate\Support\Facades\Auth;
 
-class InvoieRepositoryImpl implements InvoiceInterface
+class InvoiceRepositoryImpl implements InvoiceInterface
 {
 
     public function getInvoice(string $search, int $perPage)
@@ -57,8 +57,24 @@ class InvoieRepositoryImpl implements InvoiceInterface
     }
 
 
-    public function paymentOrder($orderId)
+    public function downloadInvoice($orderId)
     {
-        return [];
+
+        $client = Auth::guard('client')->user();
+
+        $order = Order::with(['invitationTemplate' => function ($query) {
+            $query->select([
+                'id',
+                'template_name',
+                'thumbnail',
+                'type',
+                'price',
+                'priceDiscount',
+                'isDiscount'
+            ]);
+        }])
+            ->where('client_id', $client->id);
+
+        return $order->where('id', $orderId)->first();
     }
 }

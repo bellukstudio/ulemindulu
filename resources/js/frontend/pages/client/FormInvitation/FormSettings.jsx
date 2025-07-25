@@ -76,6 +76,7 @@ export default function FormSettings({ order, template }) {
      *   successfully or is rejected if an error occurs.
      */
     const fetchAvailableSettings = async (orderId) => {
+        setLoading(true);
         try {
             const result = await invitationAPI.checkInvitationSetting(orderId);
 
@@ -216,7 +217,7 @@ export default function FormSettings({ order, template }) {
                 );
 
                 if (result.success) {
-                    location.reload();
+                    await fetchAvailableSettings(orderId);
                 } else {
                     setError(result.error || "Terjadi kesalahan saat edit.");
                 }

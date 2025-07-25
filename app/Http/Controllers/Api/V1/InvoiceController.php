@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Application\Invoice\GetMyInvoiceUseCase;
+use App\Deps\InvoiceDependencies;
 use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -10,11 +10,16 @@ use Illuminate\Http\Request;
 class InvoiceController extends Controller
 {
     protected $useCaseMyInvoice;
+    protected $useCaseDownloadInvoice;
+    protected $useCaseOrder;
 
 
-    public function __construct(GetMyInvoiceUseCase $useCaseMyInvoice)
-    {
-        $this->useCaseMyInvoice = $useCaseMyInvoice;
+    public function __construct(
+        InvoiceDependencies $deps
+    ) {
+        $this->useCaseMyInvoice = $deps->useCaseMyInvoice;
+        $this->useCaseDownloadInvoice = $deps->usecaseDownloadInvoice;
+        $this->useCaseOrder = $deps->useCaseOrder;
     }
 
 
@@ -28,5 +33,23 @@ class InvoiceController extends Controller
             'invoice' => $invoice,
             'message' => 'Template list',
         ], 'Template list', 200);
+    }
+
+    public function downloadInvoice($orderId)
+    {
+        $order = $this->useCaseOrder->findById($orderId);
+
+        if (!$order) {
+            return ApiResponse::error([
+                'message' => 'Order not found',
+            ], 'Order not found', 404);
+        }
+
+        $invoice = $this->useCaseDownloadInvoice->execute($orderId);
+
+        return ApiResponse::success([
+            'invoice' => $invoice,
+            'message' => 'Invoice',
+        ], 'Invoice', 200,);
     }
 }

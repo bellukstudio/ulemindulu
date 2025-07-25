@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Application\Auth\LoginApiUseCase;
+use App\Deps\LoginDependencies;
 use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -14,9 +14,9 @@ class LoginController extends Controller
     protected $loginUseCase;
 
 
-    public function __construct(LoginApiUseCase $loginUseCase)
+    public function __construct(LoginDependencies $deps)
     {
-        $this->loginUseCase = $loginUseCase;
+        $this->loginUseCase = $deps->loginUseCase;
     }
     /**
      * Login a client

@@ -2,38 +2,21 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Application\Auth\RegisterApiUseCase;
+
+use App\Deps\RegisterDependencies;
 use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class RegisterController extends Controller
-/**
- * Handle the registration of a new client.
- *
- * @param  \Illuminate\Http\Request  $request
- * @return \Illuminate\Http\JsonResponse
- *
- * Validates the incoming request data and creates a new client record.
- * Generates a token for the newly registered client and returns a JSON
- * response with the registration status, token, and client details.
- * If validation fails, returns a JSON response with error messages.
- */
-
 {
 
 
     protected $registerUseCase;
-
-    /**
-     * Injects the RegisterApiUseCase.
-     *
-     * @param  \App\Application\Auth\RegisterApiUseCase  $registerUseCase
-     */
-    public function __construct(RegisterApiUseCase $registerUseCase)
+    public function __construct(RegisterDependencies $deps)
     {
-        $this->registerUseCase = $registerUseCase;
+        $this->registerUseCase = $deps->registerUseCase;
     }
 
 

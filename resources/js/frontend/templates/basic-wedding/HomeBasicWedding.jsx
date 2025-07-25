@@ -4,6 +4,7 @@ import { useRef, useState, Suspense } from "react";
 import LandingWrapperBasicWedding from "./LandingWrapperBasicWedding";
 import Invitation from "./Invitation";
 import PropTypes from "prop-types";
+import Loading from "../../pages/Loading";
 
 HomeBasicWedding.propTypes = {
     data: PropTypes.object,
@@ -34,7 +35,7 @@ export default function HomeBasicWedding({ data, gift, isPreview, album }) {
                 loop
             />
             {!showInvitation && (
-                <Suspense fallback={<div>Loading...</div>}>
+                <Suspense fallback={<Loading />}>
                     <LandingWrapperBasicWedding
                         onFinish={handleStart}
                         data={data}
